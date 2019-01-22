@@ -3,7 +3,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class DownloadManager, FileTask, TMRequestModel;
+@class DownloadManager, FileTask, RequestModel;
 
 @protocol DownloadManagerDelegate <NSObject>
 @optional
@@ -35,9 +35,9 @@
  下载文件
 
  @param model 文件
- @param nasDirectory 文件所在目录
+ @param serverDirectory 文件所在目录
  */
-- (void)downloadFile:(TMRequestModel *)model fromNasDirectory:(NSString *)nasDirectory;
+- (void)downloadFile:(RequestModel *)model fromserverDirectory:(NSString *)serverDirectory;
 
 /**
  暂停所有

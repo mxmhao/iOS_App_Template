@@ -177,11 +177,11 @@ static dispatch_once_t onceToken;
 }
 
 //添加下载任务
-- (void)downloadFile:(TMRequestModel *)model fromNasDirectory:(NSString *)nasDirectory
+- (void)downloadFile:(RequestModel *)model fromserverDirectory:(NSString *)serverDirectory
 {
     NSString *fileName = model.name;
-    NSString *nasPath = [nasDirectory stringByAppendingPathComponent:fileName];
-    if ([FileTask isExistsFileTaskForUser:_user nasPath:nasPath fileTaskType:FileTaskTypeDownload]) //当前任务已存在
+    NSString *serverPath = [serverDirectory stringByAppendingPathComponent:fileName];
+    if ([FileTask isExistsFileTaskForUser:_user serverPath:serverPath fileTaskType:FileTaskTypeDownload]) //当前任务已存在
         return;
     
     FileTask *fileTask = [[FileTask alloc] initForInsert];
@@ -192,8 +192,8 @@ static dispatch_once_t onceToken;
     fileTask.userId = _user.Id;
     fileTask.state = FileTaskStatusWaiting;
     fileTask.size = model.size.integerValue;
-    fileTask.filetype = [TMFileOperationTools getFileType:fileName];//文件类型
-    fileTask.nasPath = nasPath;//[nasDirectory stringByAppendingPathComponent:model.name];
+    fileTask.filetype = [FileOperationTools getFileType:fileName];//文件类型
+    fileTask.serverPath = serverPath;//[serverDirectory stringByAppendingPathComponent:model.name];
 //    fileTask.localPath = localPath;//DownLoadSanboxFilePath//具体保存的时候再去获取
     fileTask.createTime = [NSDate date].timeIntervalSince1970;
     [fileTask updateToLocal];
@@ -393,7 +393,7 @@ static dispatch_once_t onceToken;
         [sself completedDownloadFileTask:fileTask];
     };
     
-    NSString *url = [fileTask.nasPath getDownLoadPath];
+    NSString *url = [fileTask.serverPath getDownLoadPath];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     NSString *absolutePath = [_docDir stringByAppendingPathComponent:fileTask.localPath];
     //查看文件是否已存在，要是存在就接着下载
@@ -409,7 +409,7 @@ static dispatch_once_t onceToken;
         }
         [request setValue:[NSString stringWithFormat:@"bytes=%llu-", rangeStart] forHTTPHeaderField:@"Range"];//继续下载没下完的部分
         fileTask.completedSize = rangeStart;
-        //此断点续传有bug，当NAS上的此文件被其它的文件覆盖了，继续下载就是错误的文件
+        //此断点续传有bug，当server上的此文件被其它的文件覆盖了，继续下载就是错误的文件
     }
     fileTask.state = FileTaskStatusInProgress;
     _currentFileTask = fileTask;
@@ -495,7 +495,7 @@ static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时
         return [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:response.suggestedFilename]];
     };
     
-    NSString *url = [fileTask.nasPath getDownLoadPath];
+    NSString *url = [fileTask.serverPath getDownLoadPath];
     
     fileTask.state = FileTaskStatusInProgress;
     _currentFileTask = fileTask;
@@ -548,7 +548,7 @@ static NSString *const NSURLSessionDownloadURLKey = @"NSURLSessionDownloadURL";
     
     NSDictionary *dic = [DownloadManager dictionaryWithContentsOfData:resumeData];
     if (@available(iOS 12, *)) {//  13,14
-        static int const filenameIndex = 14;
+        static int const filenameIndex = 14;//下标无法固定，只能用循环比较了
 //        task.resumeDataName = [dic[ResumeDataObjects][filenameIndex] stringByAppendingPathExtension:@"plist"];
         NSArray *arr = dic[ResumeDataObjects];
 //        NSLog(@"%@", arr[filenameIndex-1]);
@@ -757,14 +757,14 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
 #pragma mark - 把图片视频写入相册
 - (void)saveFileTask:(FileTask *)ftask
 {
-    TMFileType type = ftask.filetype;//文件类型
+    FileType type = ftask.filetype;//文件类型
     //如果不是图片或者视频就不要保存了
-    if (TMFileType_Photo != type && TMFileType_Video != type) return;
+    if (FileType_Photo != type && FileType_Video != type) return;
     
     __weak FileTask *task = ftask;
     //1.
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-        if (TMFileType_Photo == type) {
+        if (FileType_Photo == type) {
             PHAssetChangeRequest *request = [PHAssetCreationRequest creationRequestForAssetFromImageAtFileURL:[NSURL fileURLWithPath:[_docDir stringByAppendingPathComponent:task.localPath]]];
 //            request.creationDate = //设置时间
 //            request.location = //设置GPS坐标
@@ -817,7 +817,7 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
 - (PHAssetCollection *)fetchAssetCollection
 {
     //自定义相册名称
-    static NSString *const customPHAssetCollectionName = @"TNAS mobile";
+    static NSString *const customPHAssetCollectionName = @"server mobile";
     //判断是否已存在
     PHFetchResult<PHAssetCollection *> *assetCollections = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
     for (PHAssetCollection * assetCollection in assetCollections) {

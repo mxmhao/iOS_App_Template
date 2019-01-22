@@ -22,7 +22,7 @@ BOOL UsersCannotUseTheNetwork(AFNetworkReachabilityStatus status, BOOL isLoadOnW
     AFNetworkReachabilityManager *_nrm;
     NSURLSessionDataTask *_IPTask;
     NSURLSessionDataTask *_customTask;
-    NSURLSessionDataTask *_tnasOnlineTask;
+    NSURLSessionDataTask *_serverOnlineTask;
     AFNetworkReachabilityStatus _lastStatus;
     BOOL _isLongTimeCheck;
     
@@ -30,7 +30,7 @@ BOOL UsersCannotUseTheNetwork(AFNetworkReachabilityStatus status, BOOL isLoadOnW
     
     BOOL _IPCheckFinish;
     BOOL _userCustomCheckFinish;
-    BOOL _tnasOnlineCheckFinish;
+    BOOL _serverOnlineCheckFinish;
     BOOL _userCustomReachable;
 }
 
@@ -49,9 +49,9 @@ BOOL UsersCannotUseTheNetwork(AFNetworkReachabilityStatus status, BOOL isLoadOnW
     _userCustomCheckFinish = finish;
 }
 
-- (void)setTNASonlineCheckFinish:(BOOL)finish
+- (void)setserveronlineCheckFinish:(BOOL)finish
 {
-    _tnasOnlineCheckFinish = finish;
+    _serverOnlineCheckFinish = finish;
 }
 
 - (void)setUserCustomReachable:(BOOL)reachable
@@ -125,7 +125,7 @@ static dispatch_once_t onceToken;
     AFNetworkReachabilityStatus status = [noti.userInfo[AFNetworkingReachabilityNotificationStatusItem] integerValue];
     if ((AFNetworkReachabilityStatusReachableViaWWAN == status || AFNetworkReachabilityStatusNotReachable == status) && AFNetworkReachabilityStatusReachableViaWiFi == _lastStatus) {//从WiFi变成4G网络或无网络
         [self logout];
-//        peanutUrl = ([DataBean.currentDevice.url rangeOfString:@"."].length == 0 ? DataBean.currentDevice.channelUrl : DataBean.currentDevice.url);
+//        baseURL = ([DataBean.currentDevice.url rangeOfString:@"."].length == 0 ? DataBean.currentDevice.channelUrl : DataBean.currentDevice.url);
 //        [[NSNotificationCenter defaultCenter] postNotificationName:NetworkUsableDidChangeNotification object:nil userInfo:@{NetworkUsableItem: @NO}];
         //退出登录
     } else if (UsersCannotUseTheNetwork(status, User.currentUser.loadOnWiFi)) {//用户不能使用网络
@@ -177,8 +177,8 @@ static dispatch_once_t onceToken;
     if (nil != _customTask) {
         [_customTask cancel];
     }
-    if (nil != _tnasOnlineTask) {
-        [_tnasOnlineTask cancel];
+    if (nil != _serverOnlineTask) {
+        [_serverOnlineTask cancel];
     }
     
     if (_nrm.isReachable) {
@@ -191,8 +191,8 @@ static dispatch_once_t onceToken;
         _userCustomCheckFinish = NO;
         _userCustomReachable = NO;
         [self checkUserCustomReachability];
-        _tnasOnlineCheckFinish = NO;
-        [self checkTNASonlineReachability];
+        _serverOnlineCheckFinish = NO;
+        [self checkserveronlineReachability];
     } else {
         if (result) result(NO);
         return;
@@ -281,7 +281,7 @@ static dispatch_once_t onceToken;
     }];
 }
 
-- (void)checkTNASonlineReachability
+- (void)checkserveronlineReachability
 {
     if (_isLongTimeCheck) {
         _httpManager.requestSerializer.timeoutInterval = 30;
@@ -291,23 +291,23 @@ static dispatch_once_t onceToken;
 //    NSString *addr = ([DataBean.currentDevice.url rangeOfString:@"."].length == 0 ? DataBean.currentDevice.channelUrl : DataBean.currentDevice.url);
     NSString *addr = DataBean.currentDevice.channelUrl;
     if (nil == addr) {
-        NSLog(@"TNAS online出错");
+        NSLog(@"server online出错");
         _networked = _networked || NO;
-        _tnasOnlineCheckFinish = YES;
+        _serverOnlineCheckFinish = YES;
         [self checkFinish:NO];
         return;
     }
     NSString *url = [RegisterIsConnected stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:addr];
     
     __weak typeof(self) this = self;
-    _tnasOnlineTask = [_httpManager POST:url parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
+    _serverOnlineTask = [_httpManager POST:url parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
         //有返回说明可达
         NSLog(@"%@", responseObject);
         
         BOOL successed = [responseObject[@"code"] boolValue];
         NSString *str = responseObject[@"data"];
         [this setNetworked:successed && ![@"---" isEqualToString:str]];
-        [this setTNASonlineCheckFinish:YES];
+        [this setserveronlineCheckFinish:YES];
         [this checkFinish:NO];
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -315,7 +315,7 @@ static dispatch_once_t onceToken;
         NSLog(@"%@", error.localizedDescription);
         if (error.code == NSURLErrorCancelled) return;//自己取消的，就不用往下调用了
         [this setNetworked:NO];
-        [this setTNASonlineCheckFinish:YES];
+        [this setserveronlineCheckFinish:YES];
         [this checkFinish:NO];
     }];
 }
@@ -327,7 +327,7 @@ static dispatch_once_t onceToken;
     } else if (localReachable) {//本地可达，直接完成回调
         DataBean.currentDevice.isLocal = YES;
         NSInteger port = DataBean.currentDevice.port > 0? DataBean.currentDevice.port : DeviceDefaultPort;
-        peanutUrl = [NSString stringWithFormat:@"%@:%ld", DataBean.currentDevice.ip, port];
+        baseURL = [NSString stringWithFormat:@"%@:%ld", DataBean.currentDevice.ip, port];
         if (_result) _result(_networked);
         _result = nil;
         return;
@@ -335,7 +335,7 @@ static dispatch_once_t onceToken;
     if (!_userCustomCheckFinish) return;
     if (_userCustomReachable) {//用户自定义可达，直接完成回调
         DataBean.currentDevice.isLocal = YES;
-        peanutUrl = DataBean.currentDevice.url;
+        baseURL = DataBean.currentDevice.url;
         if (_result) _result(_networked);
         _result = nil;
         return;
@@ -344,9 +344,9 @@ static dispatch_once_t onceToken;
     //本地不可达
     if (!DataBean.currentDevice.isLocal) {//如果是本地设备，那就说明此设备是被搜索的到的，不用修改
         if (_networked) {
-            peanutUrl = DataBean.currentDevice.channelUrl;
+            baseURL = DataBean.currentDevice.channelUrl;
         } else {
-            peanutUrl = ([DataBean.currentDevice.url rangeOfString:@"."].length == 0 ? DataBean.currentDevice.channelUrl : DataBean.currentDevice.url);
+            baseURL = ([DataBean.currentDevice.url rangeOfString:@"."].length == 0 ? DataBean.currentDevice.channelUrl : DataBean.currentDevice.url);
         }
     }
     if (_result) _result(_networked);
@@ -366,8 +366,8 @@ static dispatch_once_t onceToken;
         [_customTask cancel];
 //        return YES;
     }
-    if (nil != _tnasOnlineTask || _tnasOnlineTask.state == NSURLSessionTaskStateRunning) {
-        [_tnasOnlineTask cancel];
+    if (nil != _serverOnlineTask || _serverOnlineTask.state == NSURLSessionTaskStateRunning) {
+        [_serverOnlineTask cancel];
         return YES;
     }
     return NO;
@@ -375,26 +375,10 @@ static dispatch_once_t onceToken;
 
 - (void)logout
 {
-    //停止音乐
-    if ([cjMusicPlayer isPlaying]) {
-        [cjMusicPlayer remoteControlPause];
-        [cjMusicPlayer removeFromSuperview];
-    }
-    //暂停传输
-//    [[TTTranslationController makeTranslateController] stopTranslation];
-//    [TMUserDefaults setBool:NO forKey:@"isRem"];
+    //停止一切
     User.currentUser = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:UserLogoutNotification object:nil];
     
-    TMDeviceController *vc = [[TMDeviceController alloc] init];
-    NABaseNavController *nav = [[NABaseNavController alloc]initWithRootViewController:vc];
-    DataBean *mBean = DataBean.currentDevice;
-    peanutUrl = [NSString stringWithFormat:@"%@:%ld", mBean.ip, (long)mBean.port];
-    TMLoginController *lvc = [[TMLoginController alloc] init];
-//    DataBean.currentDevice = mBean;
-    lvc.device = mBean;
-    [nav pushViewController:lvc animated:NO];
-    [TeraMasterAppDelegate sharedDelegate].window.rootViewController = nav;
     
     onceTokenManager = 0;
     sharedManager = nil;

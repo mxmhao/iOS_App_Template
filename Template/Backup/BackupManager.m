@@ -171,7 +171,7 @@ static NSTimeInterval const TimeRepeat = 7200.000000;//2小时//1800.000000;//30
         _httpManager = [AFHTTPSessionManager manager];
         //异步完成调用
         _httpManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//        dispatch_queue_create("com.tnas.backup", DISPATCH_QUEUE_SERIAL);
+//        dispatch_queue_create("com.server.backup", DISPATCH_QUEUE_SERIAL);
         [_httpManager.requestSerializer setValue:DataBean.currentDevice.pwd forHTTPHeaderField:@"Authorization"];
 //        [_httpManager.requestSerializer setValue:@"zh-cn" forHTTPHeaderField:@"Accept-Language"];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityStatusChanged:) name:NetworkUsableDidChangeNotification object:nil];//AFNetworkingReachabilityDidChangeNotification
@@ -266,11 +266,11 @@ static NSString *const backDir = @"/Mobile backup/";
 - (void)createBackupFolder
 {
     NSLog(@"创建远程备份目录");
-//    if (peanutUrl.length == 0) {
-//        peanutUrl = [TMUserDefaults objectForKey:@"peanutUrl"];
+//    if (baseURL.length == 0) {
+//        baseURL = [UserDefaults objectForKey:@"baseURL"];
 //    }
     
-    NSString *urlstr = [HttpCreatNewFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:peanutUrl];
+    NSString *urlstr = [HttpCreatNewFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
     if (nil == _backupDir) {
         _backupDir = [NSString stringWithFormat:@"%@%@%@%@", homeDir, _user.account, backDir, _device.name];
     }
@@ -279,19 +279,19 @@ static NSString *const backDir = @"/Mobile backup/";
     [_httpManager POST:urlstr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
         if ([responseObject[@"code"] boolValue]) {
             //开始备份
-            [this fetchNasFileList];
+            [this fetchserverFileList];
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"远程备份目录创建失败: \n%@", error);
     }];
 }
 
-//1、获取NAS上已备份文件目录
-- (void)fetchNasFileList
+//1、获取server上已备份文件目录
+- (void)fetchserverFileList
 {
     _backedupList = [NSMutableArray array];
     NSDictionary *params = @{@"path": _backupDir};
-    NSString *urlstr = [HttpFileListUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:peanutUrl];
+    NSString *urlstr = [HttpFileListUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
     __weak typeof(self) this = self;
     [_httpManager POST:urlstr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (![responseObject[@"code"] boolValue]) return;
@@ -405,11 +405,11 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
     if (nil == fTask.fileHandle) {
         fTask.fileHandle = [NSFileHandle fileHandleForReadingAtPath:[_tempDir stringByAppendingPathComponent:fTask.localPath]];        
     }
-    NSString *urlstr = [HttpUpLoadFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:peanutUrl];
+    NSString *urlstr = [HttpUpLoadFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
     NSDictionary * params = @{
         @"chunk": @(fTask.currentFragment),//当前是第几个片段, 从0开始
         @"chunks": @(fTask.totalFragment),//一共多少个片段
-        @"saveTo": fTask.nasPath,//保存到哪里
+        @"saveTo": fTask.serverPath,//保存到哪里
         @"date": [NSString stringWithFormat:@"%.0f", fTask.createTime*1000],//文件创建日期
     };
     
@@ -562,13 +562,13 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
     }
 }
 
-//清除NAS上的上传缓存
+//清除server上的上传缓存
 - (void)clearUpLoadCache:(FileTask *)task
 {
     task.completedSize = 0;
     task.currentFragment = 0;
-    NSDictionary *params = @{@"saveTo": task.nasPath};
-    NSString *url = [HttpClearUpLoadCache stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:peanutUrl];
+    NSDictionary *params = @{@"saveTo": task.serverPath};
+    NSString *url = [HttpClearUpLoadCache stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
     [_httpManager POST:url parameters:params progress:nil success:nil failure:nil];
 }
 
@@ -578,7 +578,7 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
     task.fileName = [asset valueForKey:@"filename"];
     task.createTime = [asset.modificationDate timeIntervalSince1970];
     task.mediaType = asset.mediaType;
-    task.nasPath = [_backupDir stringByAppendingPathComponent:task.fileName];
+    task.serverPath = [_backupDir stringByAppendingPathComponent:task.fileName];
     task.localPath = [OutputDir stringByAppendingPathComponent:[cachePath lastPathComponent]];//使用相对路径，相对于_tempDir
     [self divideTask:task];
     

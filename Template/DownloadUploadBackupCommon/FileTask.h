@@ -46,8 +46,8 @@ typedef NS_ENUM(NSInteger, FileTaskType) {
 @property (nonatomic, assign) uint64_t completedSize;
 /** 传输类型 */
 @property (nonatomic, assign) FileTaskType type;//上传下载
-/** 在NAS上的路径，也是上传目标路径 */
-@property (nonatomic, copy) NSString *nasPath;
+/** 在server上的路径，也是上传目标路径 */
+@property (nonatomic, copy) NSString *serverPath;
 /** 文件创建时间 */
 @property (nonatomic, assign) NSTimeInterval createTime;
 /** 本地沙盒缓存相对路径，若是FileTaskTypeDownload则相对于NSDocumentDirectory */
@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, FileTaskType) {
 /** PHAsset.localIdentifier */
 @property (nonatomic, copy) NSString *assetLocalIdentifier;
 /** 文件类型 */
-@property (nonatomic, assign) TMFileType filetype;
+@property (nonatomic, assign) FileType filetype;
 
 //------------------这几个不用保存到数据库-------------------------
 /** 相册文件的asset */
@@ -133,7 +133,7 @@ typedef NS_ENUM(NSInteger, FileTaskType) {
  */
 + (NSArray<FileTask *> *)failureFileTasksForUser:(User *)user taskType:(FileTaskType)type;
 
-+ (BOOL)isExistsFileTaskForUser:(User *)user nasPath:(NSString *)nasPath fileTaskType:(FileTaskType)type;
++ (BOOL)isExistsFileTaskForUser:(User *)user serverPath:(NSString *)serverPath fileTaskType:(FileTaskType)type;
 
 /**
  添加新任务

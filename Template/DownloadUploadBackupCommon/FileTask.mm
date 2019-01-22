@@ -50,7 +50,7 @@ WCDB_SYNTHESIZE(FileTask, state)
 WCDB_SYNTHESIZE(FileTask, size)
 WCDB_SYNTHESIZE(FileTask, completedSize)
 WCDB_SYNTHESIZE(FileTask, type)
-WCDB_SYNTHESIZE(FileTask, nasPath)
+WCDB_SYNTHESIZE(FileTask, serverPath)
 WCDB_SYNTHESIZE(FileTask, createTime)
 WCDB_SYNTHESIZE(FileTask, localPath)
 WCDB_SYNTHESIZE(FileTask, currentFragment)
@@ -102,9 +102,9 @@ WCDB_PRIMARY_AUTO_INCREMENT(FileTask, Id)
     return [FileTaskTable() insertObjects:fileTasks];
 }
 
-+ (BOOL)isExistsFileTaskForUser:(User *)user nasPath:(NSString *)nasPath fileTaskType:(FileTaskType)type
++ (BOOL)isExistsFileTaskForUser:(User *)user serverPath:(NSString *)serverPath fileTaskType:(FileTaskType)type
 {
-    return [[FileTaskTable() getOneValueOnResult:self.AnyProperty.count() where:self.mac == user.mac && self.userId == user.Id && self.type == type && self.nasPath == nasPath] intValue] > 0;
+    return [[FileTaskTable() getOneValueOnResult:self.AnyProperty.count() where:self.mac == user.mac && self.userId == user.Id && self.type == type && self.serverPath == serverPath] intValue] > 0;
 }
 
 + (BOOL)deleteAllFileTasksForUser:(User *)user forType:(FileTaskType)type
@@ -187,7 +187,7 @@ WCDB_PRIMARY_AUTO_INCREMENT(FileTask, Id)
         if (_Id > 0 && other->_Id > 0) {
             return _Id == other->_Id;
         }
-        return [other->_mac isEqual:_mac] && other->_userId == _userId && [other->_nasPath isEqual:_nasPath];
+        return [other->_mac isEqual:_mac] && other->_userId == _userId && [other->_serverPath isEqual:_serverPath];
     }
 }
 
@@ -196,7 +196,7 @@ WCDB_PRIMARY_AUTO_INCREMENT(FileTask, Id)
     if (_Id > 0) {
         return _Id;
     }
-    return _mac.hash ^ _userId ^ _nasPath.hash;
+    return _mac.hash ^ _userId ^ _serverPath.hash;
 }
 
 #pragma mark - 计算属性

@@ -7,7 +7,7 @@
 #import "User.h"
 #import "FileTask.h"
 #import "NSTimer+Block.h"
-#import "UIImage+TMfixOrientation.h"
+#import "UIImage+fixOrientation.h"
 #import "XMLock.h"
 #import "UIImage+Format.h"
 #import "DeviceNetworkManager.h"
@@ -325,7 +325,7 @@ static NSTimeInterval const TimeRepeat = 1800.000000;//30分钟
 }
 
 #pragma mark - 导出
-- (BOOL)uploadPHAsset:(NSArray<PHAsset *> *)assets toNasDirectory:(NSString *)directory;
+- (BOOL)uploadPHAsset:(NSArray<PHAsset *> *)assets toserverDirectory:(NSString *)directory;
 {
     if (nil == assets || assets.count == 0 || nil == directory || directory.length == 0) return NO;
     
@@ -341,11 +341,11 @@ static NSTimeInterval const TimeRepeat = 1800.000000;//30分钟
         ftask.mediaType = ast.mediaType;
         ftask.createTime = ast.modificationDate.timeIntervalSince1970;
         ftask.assetLocalIdentifier = ast.localIdentifier;
-        ftask.filetype = ast.mediaType == PHAssetMediaTypeImage? TMFileType_Photo : TMFileType_Video;
+        ftask.filetype = ast.mediaType == PHAssetMediaTypeImage? FileType_Photo : FileType_Video;
         
         ftask.mac = _user.mac;
         ftask.userId = _user.Id;
-        ftask.nasPath = [directory stringByAppendingPathComponent:ftask.fileName];
+        ftask.serverPath = [directory stringByAppendingPathComponent:ftask.fileName];
         ftask.state = FileTaskStatusWaiting;
         ftask.type = FileTaskTypeUpload;
         [tasks addObject:ftask];
@@ -440,11 +440,11 @@ static uint64_t const UploadFragmentSize = 67108864;//64MB//8388608;//8MB//10485
     if (nil == fTask.fileHandle) {
         fTask.fileHandle = [NSFileHandle fileHandleForReadingAtPath:[_tempDir stringByAppendingPathComponent:fTask.localPath]];
     }
-    NSString *urlstr = [HttpUpLoadFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:peanutUrl];
+    NSString *urlstr = [HttpUpLoadFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
     NSDictionary * params = @{
         @"chunk": @(fTask.currentFragment),//当前是第几个片段, 从0开始
         @"chunks": @(fTask.totalFragment),//一共多少个片段
-        @"saveTo": fTask.nasPath,//保存到哪里
+        @"saveTo": fTask.serverPath,//保存到哪里
         @"date": [NSString stringWithFormat:@"%.0f", fTask.createTime*1000],//文件创建日期
     };
     
@@ -606,13 +606,13 @@ static uint64_t const UploadFragmentSize = 67108864;//64MB//8388608;//8MB//10485
     }
 }
 
-//清除NAS上的上传缓存
+//清除server上的上传缓存
 - (void)clearUpLoadCache:(FileTask *)ftask
 {
     ftask.completedSize = 0;
     ftask.currentFragment = 0;
-    NSDictionary *params = @{@"saveTo": ftask.nasPath};
-    NSString *url = [HttpClearUpLoadCache stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:peanutUrl];
+    NSDictionary *params = @{@"saveTo": ftask.serverPath};
+    NSString *url = [HttpClearUpLoadCache stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
     [_httpManager POST:url parameters:params progress:nil success:nil failure:nil];
 }
 

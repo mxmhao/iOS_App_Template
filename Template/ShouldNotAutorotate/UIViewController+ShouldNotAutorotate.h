@@ -1,5 +1,5 @@
 //
-//  NABaseNoRotation.h
+//  UIViewController+ShouldNotAutorotate.h
 
 #import <UIKit/UIKit.h>
 

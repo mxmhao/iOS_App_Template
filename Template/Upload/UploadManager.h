@@ -1,5 +1,15 @@
 //
 //  UploadManager.h
+/**
+ 断点上传的思路：
+ 上传前先查询服务器当前文件是否上传过，如果上传过，返回已上传的字节数，
+ 然后接着已上传的继续上传，否则从0开始上传；
+ 第一次上传时给服务器，除文件名外，最好还提交一个文件计算过的唯一标识符(如
+ MD5)，以后断点续传时，可检查上次上传的文件和此次的是否为同一个文件，
+ 若不是，就要相应的做出处理，否则，继续断点续传
+ 
+ 我下面的是用的分片上传，然后本地记录已上传的片段数，这种方式不太好
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -38,7 +48,7 @@
  @param directory 目标目录
  @return 是否已添加到上传列表
  */
-- (BOOL)uploadPHAsset:(NSArray<PHAsset *> *)assets toNasDirectory:(NSString *)directory;
+- (BOOL)uploadPHAsset:(NSArray<PHAsset *> *)assets toserverDirectory:(NSString *)directory;
 
 /**
  暂停所有

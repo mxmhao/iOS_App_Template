@@ -23,7 +23,7 @@ FOUNDATION_EXTERN NSNotificationName const LoadOnWiFiSwitchNotification;
 @property (nonatomic, assign, readonly) int Id;
 /** 用户所属设备的Mac地址 */
 @property (nonatomic, copy) NSString *mac;
-/** 设备认证码 */
+/** 认证码 */
 //@property (nonatomic, copy) NSString *deviceAuthorization;
 /** 账号 */
 @property (nonatomic, copy) NSString *account;
