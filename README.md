@@ -4,6 +4,8 @@
 ## [工具类在“/Utils/”目录下，一般可以直接使用](https://github.com/mxmhao/iOS_App_Template/tree/master/Utils)
 1. [线程锁：XMLock.h](https://github.com/mxmhao/iOS_App_Template/blob/master/Utils/XMLock.h)
 2. [常量，常用判断，调试日志：Const.h](https://github.com/mxmhao/iOS_App_Template/blob/master/Utils/Const.h)
+3. [国际化，本地化：LocalizedManager/](https://github.com/mxmhao/iOS_App_Template/tree/master/Utils/LocalizedManager)
+
 
 ## [模板类在“/Template/”目录下，一般无法直接使用，主要用来参考里面的逻辑，或者直接修改模板代码](https://github.com/mxmhao/iOS_App_Template/tree/master/Template)
 1. [备份，相册备份：Backup/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/Backup)

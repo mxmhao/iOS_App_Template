@@ -27,6 +27,8 @@
 		CBB1069121F71417007BA09A /* IPAddr.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1069021F71416007BA09A /* IPAddr.m */; };
 		CBB1069721F80914007BA09A /* TableViewTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1069621F80914007BA09A /* TableViewTemplate.m */; };
 		CBB1069921F809C7007BA09A /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = CBB1069821F809C7007BA09A /* README.md */; };
+		CBB1069D21F8361A007BA09A /* LocalizedManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1069C21F83619007BA09A /* LocalizedManager.m */; };
+		CBB1069F21F8392B007BA09A /* SupportLanguages.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBB1069E21F8392B007BA09A /* SupportLanguages.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +72,9 @@
 		CBB1069021F71416007BA09A /* IPAddr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPAddr.m; sourceTree = "<group>"; };
 		CBB1069621F80914007BA09A /* TableViewTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewTemplate.m; sourceTree = "<group>"; };
 		CBB1069821F809C7007BA09A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		CBB1069B21F83619007BA09A /* LocalizedManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedManager.h; sourceTree = "<group>"; };
+		CBB1069C21F83619007BA09A /* LocalizedManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalizedManager.m; sourceTree = "<group>"; };
+		CBB1069E21F8392B007BA09A /* SupportLanguages.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = SupportLanguages.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +142,7 @@
 			children = (
 				CBB1068E21F71102007BA09A /* XMLock.h */,
 				CBB1068F21F712B0007BA09A /* Const.h */,
+				CBB1069A21F83619007BA09A /* LocalizedManager */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -201,6 +207,16 @@
 			path = ShouldNotAutorotate;
 			sourceTree = "<group>";
 		};
+		CBB1069A21F83619007BA09A /* LocalizedManager */ = {
+			isa = PBXGroup;
+			children = (
+				CBB1069B21F83619007BA09A /* LocalizedManager.h */,
+				CBB1069C21F83619007BA09A /* LocalizedManager.m */,
+				CBB1069E21F8392B007BA09A /* SupportLanguages.plist */,
+			);
+			path = LocalizedManager;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -261,6 +277,7 @@
 				CBB1065A21F709CF007BA09A /* LaunchScreen.storyboard in Resources */,
 				CBB1065721F709CF007BA09A /* Assets.xcassets in Resources */,
 				CBB1069921F809C7007BA09A /* README.md in Resources */,
+				CBB1069F21F8392B007BA09A /* SupportLanguages.plist in Resources */,
 				CBB1065521F709CD007BA09A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,6 +305,7 @@
 				CBB1069721F80914007BA09A /* TableViewTemplate.m in Sources */,
 				CBB1068B21F710F8007BA09A /* DeviceNetworkManager.m in Sources */,
 				CBB1068721F710F8007BA09A /* DownloadManager.m in Sources */,
+				CBB1069D21F8361A007BA09A /* LocalizedManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
