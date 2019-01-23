@@ -11,3 +11,4 @@
 3. [上传：Upload/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/Upload)
 4. [屏幕旋转控制：ShouldNotAutorotate/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/ShouldNotAutorotate)
 5. [IP地址获取：IPAddr.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/IPAddr.m)
+6. [UITableViewCell侧滑删除，长按事件：TableViewTemplate.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/TableViewTemplate.m)

@@ -25,6 +25,8 @@
 		CBB1068C21F710F8007BA09A /* XMPhotosRequestManager+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1067E21F710F8007BA09A /* XMPhotosRequestManager+Utils.m */; };
 		CBB1068D21F710F8007BA09A /* UIViewController+ShouldNotAutorotate.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1068121F710F8007BA09A /* UIViewController+ShouldNotAutorotate.m */; };
 		CBB1069121F71417007BA09A /* IPAddr.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1069021F71416007BA09A /* IPAddr.m */; };
+		CBB1069721F80914007BA09A /* TableViewTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1069621F80914007BA09A /* TableViewTemplate.m */; };
+		CBB1069921F809C7007BA09A /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = CBB1069821F809C7007BA09A /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +68,8 @@
 		CBB1068E21F71102007BA09A /* XMLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XMLock.h; sourceTree = "<group>"; };
 		CBB1068F21F712B0007BA09A /* Const.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Const.h; sourceTree = "<group>"; };
 		CBB1069021F71416007BA09A /* IPAddr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPAddr.m; sourceTree = "<group>"; };
+		CBB1069621F80914007BA09A /* TableViewTemplate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewTemplate.m; sourceTree = "<group>"; };
+		CBB1069821F809C7007BA09A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,7 @@
 				CBB1065821F709CF007BA09A /* LaunchScreen.storyboard */,
 				CBB1065B21F709CF007BA09A /* Info.plist */,
 				CBB1065C21F709CF007BA09A /* main.m */,
+				CBB1069821F809C7007BA09A /* README.md */,
 			);
 			path = iOS_App_Template;
 			sourceTree = "<group>";
@@ -122,6 +127,7 @@
 				CBB1066521F710F8007BA09A /* Upload */,
 				CBB1067221F710F8007BA09A /* DownloadUploadBackupCommon */,
 				CBB1068021F710F8007BA09A /* ShouldNotAutorotate */,
+				CBB1069621F80914007BA09A /* TableViewTemplate.m */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -254,6 +260,7 @@
 			files = (
 				CBB1065A21F709CF007BA09A /* LaunchScreen.storyboard in Resources */,
 				CBB1065721F709CF007BA09A /* Assets.xcassets in Resources */,
+				CBB1069921F809C7007BA09A /* README.md in Resources */,
 				CBB1065521F709CD007BA09A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,6 +285,7 @@
 				CBB1068921F710F8007BA09A /* UIImage+Format.m in Sources */,
 				CBB1068D21F710F8007BA09A /* UIViewController+ShouldNotAutorotate.m in Sources */,
 				CBB1069121F71417007BA09A /* IPAddr.m in Sources */,
+				CBB1069721F80914007BA09A /* TableViewTemplate.m in Sources */,
 				CBB1068B21F710F8007BA09A /* DeviceNetworkManager.m in Sources */,
 				CBB1068721F710F8007BA09A /* DownloadManager.m in Sources */,
 			);
