@@ -115,4 +115,35 @@ static NSDictionary *dict;
     return index;
 }
 
+- (void)aTest
+{
+//    NSLog(@"%@", [NSUserDefaults standardUserDefaults].dictionaryRepresentation);//AppleLanguages也可切换国际化，不过要重启App
+//    NSLog(@"%@", NSLocale.availableLocaleIdentifiers);
+//    NSLog(@"%@", NSLocale.preferredLanguages);
+//    NSLog(@"%@", NSBundle.mainBundle.preferredLocalizations);
+/* NSBundle.mainBundle.localizations是本地化".lproj"包的名称，
+ 而且全部包含在NSLocale.availableLocaleIdentifiers中
+*/
+    NSLog(@"%@", NSBundle.mainBundle.localizations);
+    NSLocale *loca = [NSLocale localeWithLocaleIdentifier:NSBundle.mainBundle.localizations[0]];
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hant_MO"]);
+    
+    loca = NSLocale.autoupdatingCurrentLocale;
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hans_SG"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hant_TW"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hant_MO"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hans_MO"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hant_HK"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hans_HK"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hans_CN"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hans"]);
+    NSLog(@"%@", [loca localizedStringForLocaleIdentifier:@"zh_Hant"]);
+    
+    NSBundle *bun = [NSBundle bundleWithPath:[NSBundle.mainBundle pathForResource:@"ja" ofType:@"lproj"]];
+    
+    NSLog(@"%@", bun.bundleIdentifier);
+    NSLog(@"%@", [bun localizedStringForKey:@"title" value:@"" table:nil]);
+    NSLog(@"%@", [[NSBundle bundleWithIdentifier:@"ja"] localizedStringForKey:@"title" value:@"" table:nil]);
+}
+
 @end
