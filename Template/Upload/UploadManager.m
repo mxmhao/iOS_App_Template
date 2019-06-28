@@ -974,9 +974,10 @@ static uint64_t const UploadFragmentSize = 67108864;//64MB//8388608;//8MB//10485
         data = [context JPEGRepresentationOfImage:ciImage colorSpace:ciImage.colorSpace options:@{}];
 //        imageData = [context PNGRepresentationOfImage:ciImage format:kCIFormatRGBA8 colorSpace:ciImage.colorSpace options:@{}];
     }
-    if (UIImageOrientationUp != orientation && UIImageOrientationUpMirrored != orientation) {//把旋转过的照片调整成未旋转过的
-        data = UIImageJPEGRepresentation([[UIImage imageWithData:data scale:0] normalizedImage], 1);
-    }
+    //不要旋转了，旋转会造成图片元数据的损失
+//    if (UIImageOrientationUp != orientation && UIImageOrientationUpMirrored != orientation) {//把旋转过的照片调整成未旋转过的
+//        data = UIImageJPEGRepresentation([[UIImage imageWithData:data scale:0] normalizedImage], 1);
+//    }
     return data;
 }
 
