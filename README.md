@@ -11,6 +11,7 @@
 1. [备份，相册备份：Backup/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/Backup)
 2. [下载：Download/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/Download)
 3. [上传：Upload/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/Upload)
+        [上传下载备份中用到的：DownloadUploadBackupCommon/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/DownloadUploadBackupCommon)
 4. [屏幕旋转控制：ShouldNotAutorotate/](https://github.com/mxmhao/iOS_App_Template/tree/master/Template/ShouldNotAutorotate)
 5. [IP地址获取：IPAddr.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/IPAddr.m)
 6. [UITableViewCell侧滑删除，长按事件：TableViewTemplate.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/TableViewTemplate.m)

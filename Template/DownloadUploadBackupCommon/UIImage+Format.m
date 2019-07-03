@@ -54,7 +54,7 @@
         NSString *UTI;
         for (PHAssetResource *resource in resourceList) {
             UTI = resource.uniformTypeIdentifier;
-            if ([UTI isEqualToString:@"public.heif"] || [UTI isEqualToString:@"public.heic"]) {
+            if ([UTI isEqualToString:AVFileTypeHEIF] || [UTI isEqualToString:AVFileTypeHEIC]) {
                 isHEIF = YES;
                 break;
             }
