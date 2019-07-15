@@ -274,12 +274,17 @@ static dispatch_once_t onceToken;
         return;
     
     if (nil == _downloadManager) {
-        //[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"DownloadManager"] 若没有杀死当前app，在第二次new时，这个会导致cancelByProducingResumeData是不会回调completionHandler，我疯了🤣
-        
-//        _downloadManager = [[AFHTTPSessionManager alloc] initWithBaseURL:nil sessionConfiguration:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"DownloadManager"]];
-        _downloadManager = [AFHTTPSessionManager manager];
-        _downloadManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        [_downloadManager.requestSerializer setValue:DataBean.currentDevice.pwd forHTTPHeaderField:@"Authorization"];
+#warning 请仔细阅读注释
+        /*
+         在info.plist中设置后台模式
+         设置后台NSURLSessionConfiguration的NSURLSession在App的生命周期内同一个Identifier只能有
+         一个，不能new新的，而且Identifier必须唯一，不能和其他App的冲突，后台上传下载都是如此，而且，
+         只有对NSURLSessionDownloadTask和NSURLSessionUploadTask才有效，其他的无效
+         */
+        //[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"min.test.DownloadManager"] 若没有杀死当前app，在第二次new时，这个会导致cancelByProducingResumeData是不会回调completionHandler，我疯了🤣
+        _downloadManager = [[AFHTTPSessionManager alloc] initWithBaseURL:nil sessionConfiguration:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"min.test.DownloadManager"]];
+//        _downloadManager = [AFHTTPSessionManager manager];
+//        _downloadManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     }
     
     if (nil == _currentFileTask) {
