@@ -1,5 +1,5 @@
 # iOS_App_Template
-一些iOS工具类和模板代码，大部分是直接使用官方SDK实现，很小一部分是改造官方SDK实现或者自己实现
+iOS工具类和模板代码
 
 ## [工具类在“/Utils/”目录下，一般可以直接使用](https://github.com/mxmhao/iOS_App_Template/tree/master/Utils)
 1. [线程锁：XMLock.h](https://github.com/mxmhao/iOS_App_Template/blob/master/Utils/XMLock.h)
