@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */; };
 		CBB1064F21F709CD007BA09A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1064E21F709CD007BA09A /* AppDelegate.m */; };
 		CBB1065221F709CD007BA09A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1065121F709CD007BA09A /* ViewController.m */; };
 		CBB1065521F709CD007BA09A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CBB1065321F709CD007BA09A /* Main.storyboard */; };
@@ -32,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellAutoCalculate.m; sourceTree = "<group>"; };
 		CBB1064A21F709CD007BA09A /* iOS_App_Template.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_App_Template.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBB1064D21F709CD007BA09A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CBB1064E21F709CD007BA09A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				CBB1067221F710F8007BA09A /* DownloadUploadBackupCommon */,
 				CBB1068021F710F8007BA09A /* ShouldNotAutorotate */,
 				CBB1069621F80914007BA09A /* TableViewTemplate.m */,
+				CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 				CBB1065D21F709CF007BA09A /* main.m in Sources */,
 				CBB1068421F710F8007BA09A /* UploadManager.m in Sources */,
 				CBB1068821F710F8007BA09A /* FileTask.mm in Sources */,
+				CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */,
 				CBB1064F21F709CD007BA09A /* AppDelegate.m in Sources */,
 				CBB1068921F710F8007BA09A /* UIImage+Format.m in Sources */,
 				CBB1068D21F710F8007BA09A /* UIViewController+ShouldNotAutorotate.m in Sources */,
