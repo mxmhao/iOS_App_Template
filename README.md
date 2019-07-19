@@ -16,3 +16,4 @@ iOS工具类和模板代码
 5. [IP地址获取：IPAddr.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/IPAddr.m)
 6. [UITableViewCell侧滑删除，长按事件：TableViewTemplate.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/TableViewTemplate.m)
 7. [UITableViewCell高度自适应：TableViewCellAutoCalculate.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/TableViewCellAutoCalculate.m)
+8. [WKWebView简单使用：WebViewController.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/WebViewController.m)
