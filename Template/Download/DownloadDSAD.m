@@ -60,35 +60,35 @@ BOOL UsersCannotUseTheCellular(AFNetworkReachabilityStatus status, BOOL isLoadOn
     NSArray *arr = _dm.downloadingTasks;
     if (nil != arr && arr.count > 0) {
         [_taskArr addObject:arr];
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"downloading_header"]];//正在下载
+        [_titles addObject:@"downloading_header"];//正在下载
         if (nil == _btnPauseOrResume) {
             _btnPauseOrResume = [UIButton buttonWithType:UIButtonTypeCustom];
             [_btnPauseOrResume addTarget:self action:@selector(pauseAllOrResumeAll) forControlEvents:UIControlEventTouchUpInside];
         }
         if ([_dm isAllPaused]) {
             _btnPauseOrResume.tag = ResumeAllTag;
-            [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_resumed"] forState:UIControlStateNormal];//全部恢复下载
+            [_btnPauseOrResume setTitle:@"all_downloads_resumed" forState:UIControlStateNormal];//全部恢复下载
         } else {
             _btnPauseOrResume.tag = PasueAllTag;
-            [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_suspended"] forState:UIControlStateNormal];//全部暂停下载
+            [_btnPauseOrResume setTitle:@"all_downloads_suspended" forState:UIControlStateNormal];//全部暂停下载
         }
     }
     arr = _dm.successTasks;
     if (nil != arr && arr.count > 0) {
         [_taskArr addObject:arr];
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"download_success_header"]];//下载成功
+        [_titles addObject:@"download_success_header"];//下载成功
     }
     arr = _dm.failureTasks;
     if (nil != arr && arr.count > 0) {
         [_taskArr addObject:arr];
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"download_failure_header"]];//下载失败
+        [_titles addObject:@"download_failure_header"];//下载失败
     }
 }
 
 - (void)pauseAllOrResumeAll
 {
     _btnPauseOrResume.enabled = NO;
-    NSString *byteString = [HelperMethod GetLocalizeTextForKey:@"waiting"];//@"等待中...";
+    NSString *byteString = @"waiting";//@"等待中...";
     BOOL isPaused = NO;
     BOOL finished = NO;//NO表示未完成，会有noTasksBeingDownloaded回调
     if (ResumeAllTag == _btnPauseOrResume.tag) {
@@ -110,14 +110,14 @@ BOOL UsersCannotUseTheCellular(AFNetworkReachabilityStatus status, BOOL isLoadOn
         _btnPauseOrResume.enabled = YES;
         if (isPaused) {
             _btnPauseOrResume.tag = ResumeAllTag;
-            [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_resumed"] forState:UIControlStateNormal];//全部恢复下载
+            [_btnPauseOrResume setTitle:@"all_downloads_resumed" forState:UIControlStateNormal];//全部恢复下载
         } else {
             _btnPauseOrResume.tag = PasueAllTag;
-            [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_suspended"] forState:UIControlStateNormal];//全部暂停下载
+            [_btnPauseOrResume setTitle:@"all_downloads_suspended" forState:UIControlStateNormal];//全部暂停下载
             
             if (UsersCannotUseTheCellular(_nrm.networkReachabilityStatus, User.currentUser.loadOnWiFi)) {
                 [SVProgressHUD setMinimumDismissTimeInterval:4];
-                [SVProgressHUD showImage:[UIImage new] status:[HelperMethod GetLocalizeTextForKey:@"need_turn_off_the_upload_only_WiFi_only"]];
+                [SVProgressHUD showImage:[UIImage new] status:@"need_turn_off_the_upload_only_WiFi_only"];
             }
         }
     }
@@ -171,12 +171,12 @@ BOOL UsersCannotUseTheCellular(AFNetworkReachabilityStatus status, BOOL isLoadOn
 {
     if (![_taskArr containsObject:fileTasks]) {
         [_taskArr insertObject:fileTasks atIndex:0];
-        [_titles insertObject:[HelperMethod GetLocalizeTextForKey:@"downloading_header"] atIndex:0];//正在下载
+        [_titles insertObject:@"downloading_header" atIndex:0];//正在下载
     }
     
     if (_btnPauseOrResume.enabled) {
         _btnPauseOrResume.tag = PasueAllTag;
-        [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_suspended"] forState:UIControlStateNormal];//全部暂停下载        
+        [_btnPauseOrResume setTitle:@"all_downloads_suspended" forState:UIControlStateNormal];//全部暂停下载
     }
     [_tableView reloadData];//此方法不能被beginUpdates，endUpdates包围
 }
@@ -193,7 +193,7 @@ BOOL UsersCannotUseTheCellular(AFNetworkReachabilityStatus status, BOOL isLoadOn
     } else {
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@/%@", fileTask.completedSizeFormatString, fileTask.sizeFormatString];
         if (FileTaskStatusWaiting == fileTask.state) {
-            cell.byteLabel.text = [HelperMethod GetLocalizeTextForKey:@"waiting"];
+            cell.byteLabel.text = @"waiting";
         } else {
             cell.byteLabel.text = fileTask.speedFormatString;
         }
@@ -209,14 +209,14 @@ BOOL UsersCannotUseTheCellular(AFNetworkReachabilityStatus status, BOOL isLoadOn
     //没有目标数组，先给tableview添加一个section
     NSInteger indx = 0;
     if (toArr == _dm.downloadingTasks) {
-        [_titles insertObject:[HelperMethod GetLocalizeTextForKey:@"downloading_header"] atIndex:0];//正在下载
+        [_titles insertObject:@"downloading_header" atIndex:0];//正在下载
     } else if (toArr == _dm.successTasks) {
         if (_taskArr.firstObject == _dm.downloadingTasks) indx = 1;//含有正在下载数组
         else indx = 0;
-        [_titles insertObject:[HelperMethod GetLocalizeTextForKey:@"download_success_header"] atIndex:indx];//下载成功
+        [_titles insertObject:@"download_success_header" atIndex:indx];//下载成功
     } else {
         indx = _taskArr.count;
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"download_failure_header"]];//下载失败
+        [_titles addObject:@"download_failure_header"];//下载失败
     }
     //提前插入
     [_taskArr insertObject:toArr atIndex:indx];
@@ -256,10 +256,10 @@ BOOL UsersCannotUseTheCellular(AFNetworkReachabilityStatus status, BOOL isLoadOn
     _btnPauseOrResume.enabled = YES;
     if (isNo) {
         _btnPauseOrResume.tag = ResumeAllTag;
-        [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_resumed"] forState:UIControlStateNormal];//全部恢复下载
+        [_btnPauseOrResume setTitle:@"all_downloads_resumed" forState:UIControlStateNormal];//全部恢复下载
     } else {
         _btnPauseOrResume.tag = PasueAllTag;
-        [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_suspended"] forState:UIControlStateNormal];//全部暂停下载
+        [_btnPauseOrResume setTitle:@"all_downloads_suspended" forState:UIControlStateNormal];//全部暂停下载
     }
 }
 
@@ -314,7 +314,7 @@ static int const ResumeAllTag = 1;
         if (nil == _btnPauseOrResume) {
             _btnPauseOrResume = [UIButton buttonWithType:UIButtonTypeCustom];
             _btnPauseOrResume.tag = PasueAllTag;
-            [_btnPauseOrResume setTitle:[HelperMethod GetLocalizeTextForKey:@"all_downloads_suspended"] forState:UIControlStateNormal];//全部暂停下载
+            [_btnPauseOrResume setTitle:@"all_downloads_suspended" forState:UIControlStateNormal];//全部暂停下载
             [_btnPauseOrResume addTarget:self action:@selector(pauseAllOrResumeAll) forControlEvents:UIControlEventTouchUpInside];
         }
         static CGFloat const btnH = 40.0;
@@ -447,10 +447,10 @@ static int const ResumeAllTag = 1;
     if (nil == _delegate || ![_delegate respondsToSelector:@selector(showAlertController:)]) return;
     UIAlertController *ac = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     __weak typeof(self) this = self;
-    [ac addAction:[UIAlertAction actionWithTitle:[HelperMethod GetLocalizeTextForKey:@"cancel"] style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    [ac addAction:[UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         [this retryDownload:nil];
     }]];
-    [ac addAction:[UIAlertAction actionWithTitle:[HelperMethod GetLocalizeTextForKey:@"redownload"] style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {//重新下载
+    [ac addAction:[UIAlertAction actionWithTitle:@"redownload" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {//重新下载
         [this retryDownload:task];
     }]];
     

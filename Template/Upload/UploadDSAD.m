@@ -46,17 +46,17 @@ static CGFloat const footViewH = 54;
     NSArray *arr = _um.uploadingTasks;
     if (nil != arr && arr.count > 0) {
         [_taskArr addObject:arr];
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"uploading_header"]];//正在上传
+        [_titles addObject:@"uploading_header"];//正在上传
     }
     arr = _um.successTasks;
     if (nil != arr && arr.count > 0) {
         [_taskArr addObject:arr];
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"upload_success_header"]];//上传成功
+        [_titles addObject:@"upload_success_header"];//上传成功
     }
     arr = _um.failureTasks;
     if (nil != arr && arr.count > 0) {
         [_taskArr addObject:arr];
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"upload_failure_header"]];//上传失败
+        [_titles addObject:@"upload_failure_header"];//上传失败
     }
 }
 
@@ -110,10 +110,10 @@ static CGFloat const footViewH = 54;
     if (![_taskArr containsObject:fileTasks]) {
         if (_um.uploadingTasks == fileTasks) {
             [_taskArr insertObject:fileTasks atIndex:0];
-            [_titles insertObject:[HelperMethod GetLocalizeTextForKey:@"uploading_header"] atIndex:0];//正在上传
+            [_titles insertObject:@"uploading_header" atIndex:0];//正在上传
         } else {
             [_taskArr addObject:fileTasks];
-            [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"upload_failure_header"]];//上传失败
+            [_titles addObject:@"upload_failure_header"];//上传失败
         }
     }
     
@@ -127,12 +127,12 @@ static CGFloat const footViewH = 54;
     TransferCell *cell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     if (nil == cell) return;//不存在，或者没有不是显示状态
     
+    //更新cell的数据
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@/%@", fileTask.completedSizeFormatString, fileTask.sizeFormatString];
-//    NSLog(@"%@ -- speed: %@ -- %lld", cell.detailTextLabel.text, fileTask.speedFormatString, fileTask.size);
-    if (FileTaskStatusPause == fileTask.state) {
-        cell.byteLabel.text = nil;
+    if (FileTaskStatusPause == fileTask.state) {//暂停了
+//        cell.byteLabel.text = nil;
     } else {
-        cell.byteLabel.text = fileTask.speedFormatString;
+//        cell.byteLabel.text = fileTask.speedFormatString;
     }
 }
 
@@ -146,14 +146,14 @@ static CGFloat const footViewH = 54;
     NSInteger indx = 0;
     if (toArr == _um.uploadingTasks) {
         indx = 0;
-        [_titles insertObject:[HelperMethod GetLocalizeTextForKey:@"uploading_header"] atIndex:0];//正在上传
+        [_titles insertObject:@"uploading_header" atIndex:0];//正在上传
     } else if (toArr == _um.successTasks) {
         if (_taskArr.firstObject == _um.uploadingTasks) indx = 1;//含有有正在下载的
         else indx = 0;
-        [_titles insertObject:[HelperMethod GetLocalizeTextForKey:@"upload_success_header"] atIndex:indx];//上传成功
+        [_titles insertObject:@"upload_success_header" atIndex:indx];//上传成功
     } else {
         indx = _taskArr.count;
-        [_titles addObject:[HelperMethod GetLocalizeTextForKey:@"upload_failure_header"]];//上传失败
+        [_titles addObject:@"upload_failure_header"];//上传失败
     }
     //先提前插入数组
     [_taskArr insertObject:toArr atIndex:indx];
@@ -181,7 +181,7 @@ static CGFloat const footViewH = 54;
     
     tsection = [_taskArr indexOfObject:toArr];
     TransferCell *cell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:toIdx inSection:tsection]];
-    if (nil != cell) [cell setFileTask:fileTask];
+    if (nil != cell) [cell setFileTask:fileTask];//更新数据
 }
 
 #pragma mark - DataSource
@@ -200,6 +200,7 @@ static CGFloat const footViewH = 54;
 {
     temptask = _taskArr[indexPath.section][indexPath.row];
     TransferCell *cell = [TransferCell dequeueReusableCellWithTableView:tableView];
+    //绑定数据
     [cell setImageWithFileTask:temptask];
     [cell setFileTask:temptask];
     
@@ -217,6 +218,7 @@ static CGFloat const footViewH = 54;
 {
     if (tableView.editing) {
         @try {
+            //计算选中的
             _taskArr[indexPath.section][indexPath.row].selected = YES;
             if (_delegate && [_delegate respondsToSelector:@selector(didSelectAll:)]) {
                 NSUInteger count = 0;
@@ -255,6 +257,7 @@ static CGFloat const footViewH = 54;
 {
     if (tableView.editing) {
         @try {
+            //计算未选中的
             _taskArr[indexPath.section][indexPath.row].selected = NO;
             if (_delegate && [_delegate respondsToSelector:@selector(didSelectAll:)]) {
                 NSUInteger count = 0;
@@ -311,10 +314,10 @@ static CGFloat const footViewH = 54;
     if (nil == _delegate || ![_delegate respondsToSelector:@selector(showAlertController:)]) return;
     UIAlertController *ac = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     __weak typeof(self) this = self;
-    [ac addAction:[UIAlertAction actionWithTitle:[HelperMethod GetLocalizeTextForKey:@"cancel"] style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    [ac addAction:[UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         [this retryUpload:nil];
     }]];
-    [ac addAction:[UIAlertAction actionWithTitle:[HelperMethod GetLocalizeTextForKey:@"reupload"] style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {//重新上传
+    [ac addAction:[UIAlertAction actionWithTitle:@"reupload" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {//重新上传
         [this retryUpload:task];
     }]];
     

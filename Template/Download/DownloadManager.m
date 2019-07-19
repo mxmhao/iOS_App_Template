@@ -121,6 +121,7 @@ static dispatch_once_t onceToken;
     _failureTasks = [NSMutableArray array];
     [FileTask createTable];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //从数据库加载信息
         [_fileTasks addObjectsFromArray:[FileTask progressFileTasksForUser:_user taskType:FileTaskTypeDownload]];
         [_successTasks addObjectsFromArray:[FileTask successFileTasksForUser:_user taskType:FileTaskTypeDownload]];
         [_failureTasks addObjectsFromArray:[FileTask failureFileTasksForUser:_user taskType:FileTaskTypeDownload]];
@@ -147,7 +148,6 @@ static dispatch_once_t onceToken;
         [_downloadTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
             //要想resumeData不为nil，响应头中必须有Etag或Last-modified(两者其一，或者都有)
             __strong typeof(this) sself = this;
-//            [sself mergeFile:task withResumeData:resumeData];
             [sself saveTask:task withResumeData:resumeData];
         }];
         _currentFileTask = nil;
@@ -231,7 +231,7 @@ static dispatch_once_t onceToken;
     }
     return;
     
-    if (UsersCannotUseTheNetwork([noti.userInfo[AFNetworkingReachabilityNotificationStatusItem] integerValue], _user.loadOnWiFi)) {//用户不能使用网络
+    if (UsersCannotUseTheNetwork([noti.userInfo[AFNetworkingReachabilityNotificationStatusItem] integerValue], _user.loadOnWiFi)) {//用户设置了只在WiFi时下载
         [self pauseAllIsAuto:YES];
         NSLog(@"网络断开暂停");
     } else {
@@ -250,8 +250,7 @@ static dispatch_once_t onceToken;
 //电池监听
 - (void)batteryLevelDidChanged
 {
-    if (//(_user.stopBackupAlbumWhenLowBattery && _device.batteryLevel < LowBatteryValue) ||
-        _device.batteryLevel <= LowBatteryMustStopValue) {//电量过低
+    if (_device.batteryLevel <= LowBatteryMustStopValue) {//没电了
         if (_isLowBattery) return;//防止下面的重复执行
         
         _isLowBattery = YES;
@@ -333,101 +332,9 @@ static dispatch_once_t onceToken;
     return localPath;
 }
 
-- (void)downloadFileWithTask:(FileTask *)fileTask
-{
-    if (FileTaskStatusWaiting != fileTask.state) {
-        [self startNextDownloadTask];
-        return;
-    }
-    
-    uint64_t rangeStart = 0;
-    
-    __weak typeof(self) this = self;
-    __block int64_t lastBytes = 0;
-    __block NSTimeInterval lastTime = CACurrentMediaTime();
-    id downloadProgress = ^(NSProgress * _Nonnull downloadProgress) {
-        fileTask.completedSize = rangeStart + downloadProgress.completedUnitCount;
-        NSTimeInterval spaceTime = CACurrentMediaTime() - lastTime;
-        //spaceTime是不是可以做一个保留2位小数的处理？
-        if (spaceTime < 0.950000) return;//时间太短
-        //间隔时间超过1s就测试一次速度
-        if (spaceTime > 1.100000) {//间隔太大还是要精确处理
-            fileTask.transmissionSpeed = (downloadProgress.completedUnitCount - lastBytes)/spaceTime;//这个是精确的速度
-        } else {//下面的速度是粗略处理，不需要那么精确
-            fileTask.transmissionSpeed = downloadProgress.completedUnitCount - lastBytes;
-        }
-        lastBytes = downloadProgress.completedUnitCount;
-        [this notifyChangedForFileTask:fileTask];
-        lastTime = CACurrentMediaTime();
-    };
-    
-    id completionHandler = ^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        //当手动退出账号后再次登录时，使用cancelByProducingResumeData时，这里不会调用，why😅
-        __strong typeof(this) sself = this;
-        [sself setDownloadTaskNil];
-        if (nil == error) {
-            fileTask.state = FileTaskStatusCompleted;
-            //完成了，合并文件，
-            [sself mergeFile:fileTask tempFilePath:filePath tempFileSize:0];
-        } else {
-            if ([NSURLErrorDomain isEqualToString:error.domain]) {
-                if (error.code == NSURLErrorNetworkConnectionLost || error.code == NSURLErrorTimedOut) {//网络断开
-                    fileTask.state = FileTaskStatusPause;
-                    static dispatch_once_t onceToken;
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        [sself mergeFile:fileTask withResumeData:error.userInfo[NSURLSessionDownloadTaskResumeData]];
-                    });
-                    [sself notifyChangedForFileTask:fileTask];
-                    return;
-                }
-                if (error.code == NSURLErrorCancelled) {//NSURLErrorDomain
-                    //当前task.state设置成了FileTaskStatusWaiting
-                    if ([sself isStop]) return;
-                    if (FileTaskStatusPause == fileTask.state || FileTaskStatusDeleted == fileTask.state) {
-                        //取消的哪项，被暂停或删除了，就要继续下一个
-                        [sself startNextDownloadTask];
-                        return;
-                    }
-                }
-                
-            } else {
-                fileTask.state = FileTaskStatusError;
-                [sself mergeFile:fileTask withResumeData:error.userInfo[NSURLSessionDownloadTaskResumeData]];
-            }
-        }
-        [sself completedDownloadFileTask:fileTask];
-    };
-    
-    NSString *url = [fileTask.serverPath getDownLoadPath];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    NSString *absolutePath = [_docDir stringByAppendingPathComponent:fileTask.localPath];
-    //查看文件是否已存在，要是存在就接着下载
-    if (!IsTextEmptyString(fileTask.localPath) && [_fm fileExistsAtPath:absolutePath]) {
-        NSDictionary *dic = [_fm attributesOfItemAtPath:absolutePath error:NULL];
-        rangeStart = [dic fileSize];
-        if (rangeStart == fileTask.size) {//已经存在并且下载完了
-            fileTask.completedSize = rangeStart;
-            fileTask.state = FileTaskStatusCompleted;
-            [fileTask updateStatusToLocal];
-            [self completedDownloadFileTask:fileTask];
-            return;
-        }
-        [request setValue:[NSString stringWithFormat:@"bytes=%llu-", rangeStart] forHTTPHeaderField:@"Range"];//继续下载没下完的部分
-        fileTask.completedSize = rangeStart;
-        //此断点续传有bug，当server上的此文件被其它的文件覆盖了，继续下载就是错误的文件
-    }
-    fileTask.state = FileTaskStatusInProgress;
-    _currentFileTask = fileTask;
-    
-    _downloadTask = [_downloadManager downloadTaskWithRequest:request progress:downloadProgress destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        return [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:response.suggestedFilename]];
-    } completionHandler:completionHandler];
-    [_downloadTask resume];
-}
-
 static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时文件名存放的位置
 - (void)downloadFileWithResume:(FileTask *)fileTask
-{
+{//下载前要判断存储空间还够不够用
     if (FileTaskStatusWaiting != fileTask.state) {
         [self startNextDownloadTask];
         return;
@@ -436,6 +343,7 @@ static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时
     __weak typeof(self) this = self;
     __block uint64_t lastBytes = fileTask.completedSize;
     __block NSTimeInterval lastTime = CACurrentMediaTime();
+    //进度处理，或者用定时器定时读取NSProgress
     id downloadProgress = ^(NSProgress * _Nonnull downloadProgress) {
         fileTask.completedSize = downloadProgress.completedUnitCount;
         NSTimeInterval spaceTime = CACurrentMediaTime() - lastTime;
@@ -447,7 +355,7 @@ static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时
         } else {//下面的速度是粗略处理，不需要那么精确
             fileTask.transmissionSpeed = downloadProgress.completedUnitCount - lastBytes;
         }
-//        NSLog(@"%lld -- %lld", downloadProgress.completedUnitCount, downloadProgress.totalUnitCount);
+        
         lastBytes = downloadProgress.completedUnitCount;
         [this notifyChangedForFileTask:fileTask];
         lastTime = CACurrentMediaTime();
@@ -457,7 +365,7 @@ static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时
         if (nil != error) {
             NSLog(@"%@\n%@", filePath, error);
         }
-        //当手动退出账号后再次登录时，使用cancelByProducingResumeData时，这里不会调用，why😅
+        
         __strong typeof(this) sself = this;
         [sself setDownloadTaskNil];
         if (nil == error) {
@@ -468,8 +376,9 @@ static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时
                 fileTask.state = FileTaskStatusPause;
                 [sself saveTask:fileTask withResumeData:error.userInfo[NSURLSessionDownloadTaskResumeData]];
                 __strong typeof(this) self = this;
-                if (self->_device.batteryLevel < LowBatteryMustStopValue//快关机了
-                    || UsersCannotUseTheNetwork(self->_nrm.networkReachabilityStatus, self->_user.loadOnWiFi)) {//检查是不是iOS的BUG，自动中断
+                if (self->_device.batteryLevel < LowBatteryMustStopValue//电量不够了
+                    || UsersCannotUseTheNetwork(self->_nrm.networkReachabilityStatus, self->_user.loadOnWiFi))//用户开启了只再WiFi时下载
+                {//检查是不是iOS的BUG，自动中断
                     [sself notifyChangedForFileTask:fileTask];//不是
                 } else {//是
                     fileTask.state = FileTaskStatusWaiting;
@@ -497,7 +406,7 @@ static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时
     };
     
     id destination = ^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        return [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:response.suggestedFilename]];
+        return [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:response.suggestedFilename]];//存放路径
     };
     
     NSString *url = [fileTask.serverPath getDownLoadPath];
@@ -507,28 +416,29 @@ static NSString *const ResumeDataObjects = @"$objects";//iOS12中的URL和临时
     
     NSString *absolutePath = [_tmpDir stringByAppendingPathComponent:fileTask.resumeDataName];
     //查看文件是否已存在，要是存在就接着下载
-    if (!IsTextEmptyString(fileTask.resumeDataName) && [_fm fileExistsAtPath:absolutePath]) {
+    if (!IsTextEmptyString(fileTask.resumeDataName) && [_fm fileExistsAtPath:absolutePath]) {//断点续传
         
         NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:absolutePath];
         if (@available(iOS 12, *)) {
-            static int const URLIndex = 13;
+//            static int const URLIndex = 13;//此位置无法确定
 //            dict[ResumeDataObjects][URLIndex] = url;
             NSMutableArray *arr = dict[ResumeDataObjects];
             NSString *item;
             for (int i = 0, count = arr.count; i < count; ++i) {
                 item = arr[i];
+                //找到原URL
                 if ([item isKindOfClass:NSString.class] && [item hasPrefix:@"http"]) {
                     arr[i] = url;
                     break;
                 }
             }
         } else {
-static NSString *const NSURLSessionDownloadURLKey = @"NSURLSessionDownloadURL";
+            static NSString *const NSURLSessionDownloadURLKey = @"NSURLSessionDownloadURL";
             dict[NSURLSessionDownloadURLKey] = url;
         }
         _downloadTask = [_downloadManager downloadTaskWithResumeData:[DownloadManager dataWithContentsOfNSDictionary:dict] progress:downloadProgress destination:destination completionHandler:completionHandler];
         [_downloadTask resume];
-    } else {
+    } else {//新任务
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
 //        [request addValue:@"keep-alive" forHTTPHeaderField:@"Connection"];
         _downloadTask = [_downloadManager downloadTaskWithRequest:request progress:downloadProgress destination:destination completionHandler:completionHandler];
@@ -547,32 +457,33 @@ static NSString *const NSURLSessionDownloadURLKey = @"NSURLSessionDownloadURL";
     _downloadTask = nil;
 }
 
+//保存断点续传信息
 - (void)saveTask:(FileTask *)task withResumeData:(NSData *)resumeData
-{
+{//要想resumeData不为nil，响应头中必须有Etag或Last-modified(两者其一，或者都有)
     if (nil == resumeData || nil == task) return;
     
     NSDictionary *dic = [DownloadManager dictionaryWithContentsOfData:resumeData];
     if (@available(iOS 12, *)) {//  13,14
-        static int const filenameIndex = 14;//下标无法固定，只能用循环比较了
+        static int const filenameIndex = 14;//下标无法固定，只能循环比较了
 //        task.resumeDataName = [dic[ResumeDataObjects][filenameIndex] stringByAppendingPathExtension:@"plist"];
         NSArray *arr = dic[ResumeDataObjects];
-//        NSLog(@"%@", arr[filenameIndex-1]);
-//        NSLog(@"%@", arr[filenameIndex]);
         for (NSString *item in arr) {
+            //找到临时文件名
             if ([item isKindOfClass:NSString.class] && [item hasSuffix:@".tmp"]) {
                 task.resumeDataName = [item stringByAppendingPathExtension:@"plist"];
                 break;
             }
         }
     } else {
-static NSString *const NSURLSessionResumeInfoTempFileName = @"NSURLSessionResumeInfoTempFileName";
-static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeBytesReceived";
+        static NSString *const NSURLSessionResumeInfoTempFileName = @"NSURLSessionResumeInfoTempFileName";
+        static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeBytesReceived";
         task.resumeDataName = [[dic objectForKey:NSURLSessionResumeInfoTempFileName] stringByAppendingPathExtension:@"plist"];
     }
     [resumeData writeToFile:[_tmpDir stringByAppendingPathComponent:task.resumeDataName] atomically:YES];
     [task updateStatusToLocal];
 }
 
+//下载完成，移动文件
 - (void)moveFilePath:(NSURL *)filePath forTask:(FileTask *)task
 {
     if (!IsTextEmptyString(task.resumeDataName)) {
@@ -584,19 +495,7 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
     [_fm moveItemAtURL:filePath toURL:[NSURL fileURLWithPath:[_docDir stringByAppendingPathComponent:task.localPath]] error:NULL];
 }
 
-- (void)mergeFile:(FileTask *)task withResumeData:(NSData *)resumeData
-{
-    static NSString *const NSURLSessionResumeInfoTempFileName = @"NSURLSessionResumeInfoTempFileName";
-    static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeBytesReceived";
-    //NSURLSessionResumeByteRange
-    if (nil == resumeData || nil == task) return;
-    //要想resumeData不为nil，响应头中必须有Etag或Last-modified(两者其一，或者都有)
-    
-    NSDictionary *dic = [DownloadManager dictionaryWithContentsOfData:resumeData];
-    NSString *tempFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[dic objectForKey:NSURLSessionResumeInfoTempFileName]];
-    [self mergeFile:task tempFilePath:[NSURL fileURLWithPath:tempFilePath] tempFileSize:[[dic objectForKey:NSURLSessionResumeBytesReceived] unsignedLongLongValue]];
-}
-
+//把NSData转成NSDictionary
 + (NSDictionary *)dictionaryWithContentsOfData:(NSData *)data
 {
 //    CFPropertyListFormat format;
@@ -611,75 +510,11 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
     }
 }
 
+//把NSDictionary转成NSData
 + (NSData *)dataWithContentsOfNSDictionary:(NSDictionary *)dict
 {
     if (nil == dict || dict.count == 0) return nil;
     return (__bridge NSData *)(CFPropertyListCreateData(kCFAllocatorDefault, (__bridge CFPropertyListRef)(dict), kCFPropertyListXMLFormat_v1_0, kCFPropertyListImmutable, NULL));
-}
-
-//合并文件，为了可以断点续传，当filesize=0时，表示需要自己计算
-- (void)mergeFile:(FileTask *)task tempFilePath:(NSURL *)filePath tempFileSize:(uint64_t)filesize
-{   //NSLog(@"合并文件 二");
-    if (nil == filePath || nil == task) return;
-    
-    if (nil == task.localPath) {//文件不存在，移动临时文件
-        task.localPath = [self fetchLocalPathForFileName:task.fileName];
-        [task updateToLocal];
-        NSError *err = nil;
-        [_fm moveItemAtURL:filePath toURL:[NSURL fileURLWithPath:[_docDir stringByAppendingPathComponent:task.localPath]] error:&err];
-        NSLog(@"move item error: %@", err);
-        return;
-    }
-    //文件存在，合并临时文件
-    //当前文件写操作
-    NSFileHandle *fwriter = [NSFileHandle fileHandleForWritingAtPath:[_docDir stringByAppendingPathComponent:task.localPath]];
-    uint64_t hasComp = [fwriter seekToEndOfFile];
-    //临时文件读操作
-    NSFileHandle *freader = [NSFileHandle fileHandleForReadingFromURL:filePath error:NULL];
-    
-    static int const bufferLenght = 33554432;//32MB,每次读取的长度
-    //临时文件的大小
-    uint64_t tempFileSize = filesize;
-    if (0 == tempFileSize) {
-        tempFileSize = [freader seekToEndOfFile];//获取文件大小
-        [freader seekToFileOffset:0];
-    }
-    
-    task.completedSize = hasComp + tempFileSize;//重新计算一下已下载的文件大小
-    
-    static XMLock mergeLock;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        mergeLock = XM_CreateLock();
-    });
-    XM_Lock(mergeLock);
-    [fwriter seekToEndOfFile];//防止多线程有错误，这里再执行一次
-//    NSTimeInterval time = CACurrentMediaTime();
-    uint64_t offset = 0;
-    while (offset + bufferLenght <= tempFileSize) {
-        @autoreleasepool{
-            [fwriter writeData:[freader readDataOfLength:bufferLenght]];//会有内存暴增，所以要自动释放池
-        }
-        offset += bufferLenght;
-    }
-    
-    [fwriter writeData:[freader readDataToEndOfFile]];
-    [fwriter closeFile];
-    [freader closeFile];
-//    NSLog(@"合并用时%f, -- %f", CACurrentMediaTime() - time, tempFileSize/1024.0/1024.0);
-    XM_UnLock(mergeLock);
-    
-    [_fm removeItemAtURL:filePath error:NULL];
-    [task updateStatusToLocal];
-    
-    //当afn不使用backgroundSessionConfigurationWithIdentifier时，下面的可以注释
-//    if (_isStop) return;
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        if (nil == _currentFileTask) {
-//            //有可能不走completionHandler回调，所以这里启动一下
-//            [self startNextDownloadTask];
-//        }
-//    });
 }
 
 - (void)completedDownloadFileTask:(FileTask *)fTask
@@ -735,7 +570,6 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
     XM_UnLock(_lock_fileTasks);
     BOOL isNO = YES;
     if (nil != ftask) {//有任务
-//        [self downloadFileWithTask:ftask];
         [self downloadFileWithResume:ftask];
         isNO = NO;
     } else {
@@ -764,7 +598,7 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
 {
     FileType type = ftask.filetype;//文件类型
     //如果不是图片或者视频就不要保存了
-    if (FileType_Photo != type && FileType_Video != type) return;
+    if (Photo != type && Video != type) return;
     
     __weak FileTask *task = ftask;
     //1.
@@ -822,7 +656,7 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
 - (PHAssetCollection *)fetchAssetCollection
 {
     //自定义相册名称
-    static NSString *const customPHAssetCollectionName = @"server mobile";
+    static NSString *const customPHAssetCollectionName = @"my photo";
     //判断是否已存在
     PHFetchResult<PHAssetCollection *> *assetCollections = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
     for (PHAssetCollection * assetCollection in assetCollections) {
@@ -864,9 +698,8 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
         [FileTask updateFileTasks:_fileTasks];
     }
     //不一定执行下载
-    if (//(_user.stopBackupAlbumWhenLowBattery && _device.batteryLevel < LowBatteryValue)
-        _device.batteryLevel < LowBatteryMustStopValue//快关机了
-        || UsersCannotUseTheNetwork(_nrm.networkReachabilityStatus, _user.loadOnWiFi))//用户不能使用网络
+    if (_device.batteryLevel < LowBatteryMustStopValue//没电了
+        || UsersCannotUseTheNetwork(_nrm.networkReachabilityStatus, _user.loadOnWiFi))//用户设置了只在WiFi时下载
         return YES;//YES表示执行完毕，不会有回调
         
     if (nil == _currentFileTask) {
@@ -886,8 +719,7 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
     [self notifyChangedForFileTask:ftask];
     
     //不一定执行下载
-    if (//(_user.stopBackupAlbumWhenLowBattery && _device.batteryLevel < LowBatteryValue)
-        _device.batteryLevel < LowBatteryMustStopValue//快关机了
+    if (_device.batteryLevel < LowBatteryMustStopValue//没电了
         || UsersCannotUseTheNetwork(_nrm.networkReachabilityStatus, _user.loadOnWiFi))//用户不能使用网络
         return;
         
@@ -919,7 +751,6 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
         __weak typeof(self) this = self;
         [_downloadTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
             //要想resumeData不为nil，响应头中必须有Etag或Last-modified(两者其一，或者都有)
-//            [this mergeFile:task withResumeData:resumeData];
             [this saveTask:task withResumeData:resumeData];
         }];
         _downloadTask = nil;
@@ -950,7 +781,6 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
         __weak typeof(self) this = self;
         [_downloadTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
             //要想resumeData不为nil，响应头中必须有Etag或Last-modified(两者其一，或者都有)
-//            [this mergeFile:ftask withResumeData:resumeData];
             [this saveTask:ftask withResumeData:resumeData];
         }];//_downloadManager回调会有启动下一个任务
         _downloadTask = nil;
@@ -972,6 +802,7 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
     NSFileManager *fm = [NSFileManager defaultManager];
     [FileTask deleteAllFileTasksForUser:_user forType:FileTaskTypeDownload];
     NSArray<NSArray<FileTask *> *> *arr = @[_fileTasks, _successTasks, _failureTasks];
+    //并发循环，可以判断一下循环次数，若是太小，就不要并发了
     [arr enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(NSArray * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [obj enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(FileTask * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (!IsTextEmptyString(obj.localPath)) {
@@ -1116,4 +947,61 @@ static NSString *const NSURLSessionResumeBytesReceived = @"NSURLSessionResumeByt
     });
 }
 
+
+
+//此方法已不再使用。合并文件，为了可以断点续传，当filesize=0时，表示需要自己计算
+- (void)mergeFile:(FileTask *)task tempFilePath:(NSURL *)filePath tempFileSize:(uint64_t)filesize
+{   //NSLog(@"合并文件 二");
+    if (nil == filePath || nil == task) return;
+    
+    if (nil == task.localPath) {//文件不存在，移动临时文件
+        task.localPath = [self fetchLocalPathForFileName:task.fileName];
+        [task updateToLocal];
+        NSError *err = nil;
+        [_fm moveItemAtURL:filePath toURL:[NSURL fileURLWithPath:[_docDir stringByAppendingPathComponent:task.localPath]] error:&err];
+        NSLog(@"move item error: %@", err);
+        return;
+    }
+    //文件存在，合并临时文件
+    //当前文件写操作
+    NSFileHandle *fwriter = [NSFileHandle fileHandleForWritingAtPath:[_docDir stringByAppendingPathComponent:task.localPath]];
+    uint64_t hasComp = [fwriter seekToEndOfFile];
+    //临时文件读操作
+    NSFileHandle *freader = [NSFileHandle fileHandleForReadingFromURL:filePath error:NULL];
+    
+    static int const bufferLenght = 32768;//32K,每次读取的长度
+    //临时文件的大小
+    uint64_t tempFileSize = filesize;
+    if (0 == tempFileSize) {
+        tempFileSize = [freader seekToEndOfFile];//获取文件大小
+        [freader seekToFileOffset:0];
+    }
+    
+    task.completedSize = hasComp + tempFileSize;//重新计算一下已下载的文件大小
+    
+    static XMLock mergeLock;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        mergeLock = XM_CreateLock();
+    });
+    XM_Lock(mergeLock);
+    [fwriter seekToEndOfFile];//防止多线程有错误，这里再执行一次
+    //    NSTimeInterval time = CACurrentMediaTime();
+    uint64_t offset = 0;
+    while (offset + bufferLenght <= tempFileSize) {
+        @autoreleasepool{
+            [fwriter writeData:[freader readDataOfLength:bufferLenght]];//会有内存暴增，所以要自动释放池
+        }
+        offset += bufferLenght;
+    }
+    
+    [fwriter writeData:[freader readDataToEndOfFile]];
+    [fwriter closeFile];
+    [freader closeFile];
+    //    NSLog(@"合并用时%f, -- %f", CACurrentMediaTime() - time, tempFileSize/1024.0/1024.0);
+    XM_UnLock(mergeLock);
+    
+    [_fm removeItemAtURL:filePath error:NULL];
+    [task updateStatusToLocal];
+}
 @end

@@ -448,10 +448,10 @@ static uint64_t const UploadFragmentSize = 67108864;//64MB//8388608;//8MB//10485
     if (nil == fTask.fileHandle) {
         fTask.fileHandle = [NSFileHandle fileHandleForReadingAtPath:[_tempDir stringByAppendingPathComponent:fTask.localPath]];
     }
-    NSString *urlstr = [HttpUpLoadFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
+    NSString *url = @"文件上传API";
     NSDictionary * params = @{
-        @"chunk": @(fTask.currentFragment),//当前是第几个片段, 从0开始
-        @"chunks": @(fTask.totalFragment),//一共多少个片段
+        @"frag": @(fTask.currentFragment),//当前是第几个片段, 从0开始
+        @"frags": @(fTask.totalFragment),//一共多少个片段
         @"saveTo": fTask.serverPath,//保存到哪里
         @"date": [NSString stringWithFormat:@"%.0f", fTask.createTime*1000],//文件创建日期
     };
@@ -468,7 +468,7 @@ static uint64_t const UploadFragmentSize = 67108864;//64MB//8388608;//8MB//10485
     __block uint64_t lastCompleted = 0;
     __block uint64_t lastBytes = 0;
     __block NSTimeInterval lastTime = CACurrentMediaTime();
-    _dataTask = [_httpManager POST:urlstr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> _Nonnull formData) {//数据加载
+    _dataTask = [_httpManager POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> _Nonnull formData) {//数据加载
         NSData *data = nil;
         if (fTask.totalFragment > 1) {
             fTask.completedSize = fTask.currentFragment * UploadFragmentSize;
@@ -619,8 +619,8 @@ static uint64_t const UploadFragmentSize = 67108864;//64MB//8388608;//8MB//10485
 {
     ftask.completedSize = 0;
     ftask.currentFragment = 0;
-    NSDictionary *params = @{@"saveTo": ftask.serverPath};
-    NSString *url = [HttpClearUpLoadCache stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
+    NSDictionary *params = @{@"path": ftask.serverPath};
+    NSString *url = @"";//清理上传临时文件API
     [_httpManager POST:url parameters:params progress:nil success:nil failure:nil];
 }
 

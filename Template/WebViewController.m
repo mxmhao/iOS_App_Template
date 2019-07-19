@@ -1,8 +1,8 @@
 //
 //  WebViewController.m
-//  iOS_App_Template
+//  
 //
-//  Created by mxm on 2018/3/5.
+//  Created by mxm on 2018/8/13.
 //  Copyright © 2018年 mxm. All rights reserved.
 //
 //window.webkit.messageHandlers.showName.postMessage('有一个参数')

@@ -1,7 +1,7 @@
 //
 //  LocalizedManager.m
 //
-//  Created by mxm on 2018/12/7.
+//  Created by mxm on 2018/5/7.
 //  Copyright © 2018 mxm. All rights reserved.
 //
 

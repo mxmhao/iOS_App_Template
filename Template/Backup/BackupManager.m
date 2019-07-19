@@ -13,11 +13,9 @@
 #import "FileTask.h"
 #import "NSTimer+Block.h"
 #import "XMLock.h"
-#import "UIImage+Format.h"
 #import "DeviceNetworkManager.h"
 #import "XMPhotosRequestManager.h"
 #import "XMPhotosRequestManager+Utils.h"
-#import "SVProgressHUD.h"
 
 NSNotificationName const BackupFileCountUpdateNotification = @"nBackupFileCountUpdate";
 
@@ -253,8 +251,8 @@ static NSTimeInterval const TimeRepeat = 7200.000000;//2小时//1800.000000;//30
         || _cannotUseNetwork || _lowBattery
         || nil == _user //没有用户
         || _isStop
-        || !_user.autoBackupAlbum
-        || IsNotBatterySufficientForBackup(_device.batteryLevel, _user.stopBackupAlbumWhenLowBattery)
+        || !_user.autoBackupAlbum//自动备份
+        || IsNotBatterySufficientForBackup(_device.batteryLevel, _user.stopBackupAlbumWhenLowBattery)//电量低时不备份
         || UsersCannotUseTheNetwork(_nrm.networkReachabilityStatus, _user.loadOnWiFi)
         )//开启了WiFi传输设置，而当前不是WiFi网络
         return;
@@ -265,27 +263,19 @@ static NSTimeInterval const TimeRepeat = 7200.000000;//2小时//1800.000000;//30
     [self createBackupFolder];
 }
 
-static NSString *const homeDir = @"/home/";
-static NSString *const backDir = @"/Mobile backup/";
 //创建备份目录
 - (void)createBackupFolder
 {
     NSLog(@"创建远程备份目录");
-//    if (baseURL.length == 0) {
-//        baseURL = [UserDefaults objectForKey:@"baseURL"];
-//    }
-    
-    NSString *urlstr = [HttpCreatNewFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
+    NSString *url = @"";//创建备份目录API
     if (nil == _backupDir) {
-        _backupDir = [NSString stringWithFormat:@"%@%@%@%@", homeDir, _user.account, backDir, _device.name];
+        _backupDir = _device.name;//以手机名为目录
     }
-    NSDictionary *params = @{@"path": _backupDir, @"type": @"folder"};
+    NSDictionary *params = @{@"dir": _backupDir};
     __weak typeof(self) this = self;
-    [_httpManager POST:urlstr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
-        if ([responseObject[@"code"] boolValue]) {
-            //开始备份
-            [this fetchserverFileList];
-        }
+    [_httpManager POST:url parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
+        //成功,开始备份
+        [this fetchserverFileList];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"远程备份目录创建失败: \n%@", error);
     }];
@@ -295,25 +285,13 @@ static NSString *const backDir = @"/Mobile backup/";
 - (void)fetchserverFileList
 {
     _backedupList = [NSMutableArray array];
-    NSDictionary *params = @{@"path": _backupDir};
-    NSString *urlstr = [HttpFileListUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
+    NSDictionary *params = @{@"dir": _backupDir};
+    NSString *url = @"";//已备份文件获取API
     __weak typeof(self) this = self;
-    [_httpManager POST:urlstr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if (![responseObject[@"code"] boolValue]) return;
-        
-@autoreleasepool {
-        NSDictionary *dataDic = responseObject[@"data"];
-        NSArray *arr = dataDic[@"filelist"];
-        for (NSUInteger i = 0, count = arr.count; i < count; ++i) {
-            [_backedupList addObject:arr[i][@"name"]];
-        }
-        NSLog(@"获取备份目录列表，当前网盘已备份数量%ld", _backedupList.count);
-}//autoreleasepool
-        
+    [_httpManager POST:url parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {//返回文件已备份的文件
+        _backedupList = responseObject[i];
         [this fetchLocalFileList];
-        
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
         _backedupList = nil;
         NSLog(@"获取备份目录文件列表失败");
     }];
@@ -325,7 +303,7 @@ static NSString *const backDir = @"/Mobile backup/";
     _assetDic = [NSMutableDictionary dictionary];
     PHFetchResult *result = nil;
 @autoreleasepool {
-    if (_user.backupPhotos) {
+    if (_user.backupPhotos) {//只备份图片
         result = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:nil];//只取图片
         for (PHAsset *asset in result) {
             [_assetDic setObject:asset forKey:[asset valueForKey:@"filename"]];
@@ -335,8 +313,8 @@ static NSString *const backDir = @"/Mobile backup/";
 }//autoreleasepool
     
 @autoreleasepool {
-    if (_user.backupVideos) {
-        result = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:nil];//只取图片
+    if (_user.backupVideos) {//只备份视频
+        result = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:nil];//只取视频
         for (PHAsset *asset in result) {
             [_assetDic setObject:asset forKey:[asset valueForKey:@"filename"]];
         }
@@ -410,10 +388,10 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
     if (nil == fTask.fileHandle) {
         fTask.fileHandle = [NSFileHandle fileHandleForReadingAtPath:[_tempDir stringByAppendingPathComponent:fTask.localPath]];        
     }
-    NSString *urlstr = [HttpUpLoadFileUrl stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
+    NSString *url = @"";//文件上传API
     NSDictionary * params = @{
-        @"chunk": @(fTask.currentFragment),//当前是第几个片段, 从0开始
-        @"chunks": @(fTask.totalFragment),//一共多少个片段
+        @"frag": @(fTask.currentFragment),//当前是第几个片段, 从0开始
+        @"frags": @(fTask.totalFragment),//一共多少个片段
         @"saveTo": fTask.serverPath,//保存到哪里
         @"date": [NSString stringWithFormat:@"%.0f", fTask.createTime*1000],//文件创建日期
     };
@@ -428,7 +406,7 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
     fTask.state = FileTaskStatusInProgress;
     __weak typeof(self) this = self;
     
-    _dataTask = [_httpManager POST:urlstr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+    _dataTask = [_httpManager POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *data = nil;
         [fTask.fileHandle seekToFileOffset:fTask.currentFragment * UploadFragmentSize];
         if (fTask.currentFragment < fTask.totalFragment - 1) {//不是最后一个片段了
@@ -572,8 +550,8 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
 {
     task.completedSize = 0;
     task.currentFragment = 0;
-    NSDictionary *params = @{@"saveTo": task.serverPath};
-    NSString *url = [HttpClearUpLoadCache stringByReplacingOccurrencesOfString:@"[ip]:[port]" withString:baseURL];
+    NSDictionary *params = @{@"path": task.serverPath};
+    NSString *url = @"";//清理临时文件API
     [_httpManager POST:url parameters:params progress:nil success:nil failure:nil];
 }
 
@@ -603,10 +581,6 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
 {
     exportSession.outputFileType = AVFileTypeMPEG4;
     exportSession.shouldOptimizeForNetworkUse = YES;
-//    AVMutableVideoComposition *videoComposition = [XMPhotosRequestManager fixedCompositionWithAsset:exportSession.asset];
-//    if (videoComposition.renderSize.width) {// 修正视频转向
-//        exportSession.videoComposition = videoComposition;
-//    }
 }
 
 - (nullable NSData *)manager:(XMPhotosRequestManager *)manager editImageData:(NSData *)imageData asset:(PHAsset *)asset dataUTI:(NSString *)dataUTI orientation:(UIImageOrientation)orientation
@@ -615,12 +589,9 @@ static uint64_t const UploadFragmentSize = 8388608;//10485760;//10MB
     if ([UIImage isHEIF:asset]) {//如果是HEIF格式需要转码
         CIImage *ciImage = [CIImage imageWithData:imageData];
         CIContext *context = [CIContext context];
-        data = [context JPEGRepresentationOfImage:ciImage colorSpace:ciImage.colorSpace options:@{}];
+        data = [context JPEGRepresentationOfImage:ciImage colorSpace:ciImage.colorSpace options:@{}];//转成JPG
 //        imageData = [context PNGRepresentationOfImage:ciImage format:kCIFormatRGBA8 colorSpace:ciImage.colorSpace options:@{}];
     }
-//    if (UIImageOrientationUp != orientation && UIImageOrientationUpMirrored != orientation) {//把旋转过的照片调整成未旋转过的
-//        data = UIImageJPEGRepresentation([[UIImage imageWithData:data scale:0] normalizedImage], 1);
-//    }
     return data;
 }
 

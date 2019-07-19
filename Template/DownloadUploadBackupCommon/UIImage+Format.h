@@ -7,8 +7,6 @@
 
 @interface UIImage (Format)
 
-+ (UIImage *)imageForPathExtension:(NSString *)extension;
-
 + (BOOL)isHEIF:(PHAsset *)asset;
 
 @end

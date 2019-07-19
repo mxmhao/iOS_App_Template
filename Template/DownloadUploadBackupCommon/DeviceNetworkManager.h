@@ -1,5 +1,6 @@
 //
 //  DeviceNetworkManager.h
+//  此类用来测试服务器是否可达
 
 #import <Foundation/Foundation.h>
 
@@ -8,8 +9,6 @@ typedef void(^ReachabilityResult)(BOOL isReachable);
 @interface DeviceNetworkManager : NSObject
 
 + (instancetype)sharedManager;
-
-+ (void)setAuthorization:(NSString *)authorization;
 
 - (void)deviceReachability:(ReachabilityResult)result;
 

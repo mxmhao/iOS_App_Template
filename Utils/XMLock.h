@@ -2,7 +2,7 @@
 //  XMLock.h
 //  XMLock
 //
-//  Created by mxm on 2018/10/16.
+//  Created by mxm on 2018/7/20.
 //  Copyright © 2018年 mxm. All rights reserved.
 //
 //  https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Multithreading/ThreadSafetySummary/ThreadSafetySummary.html#//apple_ref/doc/uid/10000057i-CH12-SW1

@@ -1,8 +1,8 @@
 //
 //  TableViewCellAutoCalculate.m
-//  iOS_App_Template
+//  
 //
-//  Created by mxm on 2019/7/17.
+//  Created by mxm on 2018/7/17.
 //  Copyright © 2016 mxm. All rights reserved.
 //  cell高度自适应
 
