@@ -18,3 +18,4 @@ iOS工具类和模板代码
 7. [UITableViewCell高度自适应：TableViewCellAutoCalculate.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/TableViewCellAutoCalculate.m)
 8. [WKWebView简单使用：WebViewController.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/WebViewController.m)
 9. [身份验证，生物识别：LocalAuthentication.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/LocalAuthentication.m)
+9. [分享（社会化）：Share.m](https://github.com/mxmhao/iOS_App_Template/blob/master/Template/Share.m)
