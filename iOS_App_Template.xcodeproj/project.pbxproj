@@ -10,6 +10,7 @@
 		CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */; };
 		CB9C66D322E185BA00889DB6 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D222E185BA00889DB6 /* WebViewController.m */; };
 		CB9C66D622E1ABC000889DB6 /* TransferCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D422E1ABC000889DB6 /* TransferCell.m */; };
+		CB9C66D822E1B30700889DB6 /* LocalAuthentication.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D722E1B30700889DB6 /* LocalAuthentication.m */; };
 		CBB1064F21F709CD007BA09A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1064E21F709CD007BA09A /* AppDelegate.m */; };
 		CBB1065221F709CD007BA09A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CBB1065121F709CD007BA09A /* ViewController.m */; };
 		CBB1065521F709CD007BA09A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CBB1065321F709CD007BA09A /* Main.storyboard */; };
@@ -39,6 +40,7 @@
 		CB9C66D222E185BA00889DB6 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		CB9C66D422E1ABC000889DB6 /* TransferCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransferCell.m; sourceTree = "<group>"; };
 		CB9C66D522E1ABC000889DB6 /* TransferCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransferCell.h; sourceTree = "<group>"; };
+		CB9C66D722E1B30700889DB6 /* LocalAuthentication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalAuthentication.m; sourceTree = "<group>"; };
 		CBB1064A21F709CD007BA09A /* iOS_App_Template.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS_App_Template.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBB1064D21F709CD007BA09A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CBB1064E21F709CD007BA09A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				CBB1069621F80914007BA09A /* TableViewTemplate.m */,
 				CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */,
 				CB9C66D222E185BA00889DB6 /* WebViewController.m */,
+				CB9C66D722E1B30700889DB6 /* LocalAuthentication.m */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 				CBB1068B21F710F8007BA09A /* DeviceNetworkManager.m in Sources */,
 				CBB1068721F710F8007BA09A /* DownloadManager.m in Sources */,
 				CBB1069D21F8361A007BA09A /* LocalizedManager.m in Sources */,
+				CB9C66D822E1B30700889DB6 /* LocalAuthentication.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
