@@ -148,7 +148,7 @@
     }
 }
 
-#pragma mark - Cell的删除
+#pragma mark - Cell侧滑删除
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
@@ -161,6 +161,8 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [arr removeObjectAtIndex:indexPath.row];//删除数据
+    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationBottom];//删除行cell
 }
 
 #pragma mark - Cell长按触发
