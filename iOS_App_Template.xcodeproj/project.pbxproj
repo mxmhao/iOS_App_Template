@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */; };
 		CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */; };
 		CB9C66D322E185BA00889DB6 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D222E185BA00889DB6 /* WebViewController.m */; };
 		CB9C66D622E1ABC000889DB6 /* TransferCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D422E1ABC000889DB6 /* TransferCell.m */; };
@@ -37,6 +38,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInputStream+Skip.m"; sourceTree = "<group>"; };
+		39B62185235C7C8F00F372D4 /* NSInputStream+Skip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInputStream+Skip.h"; sourceTree = "<group>"; };
 		CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellAutoCalculate.m; sourceTree = "<group>"; };
 		CB9C66D222E185BA00889DB6 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		CB9C66D422E1ABC000889DB6 /* TransferCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransferCell.m; sourceTree = "<group>"; };
@@ -99,6 +102,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		39B62183235C7C8F00F372D4 /* NSInputStreamSkip */ = {
+			isa = PBXGroup;
+			children = (
+				39B62185235C7C8F00F372D4 /* NSInputStream+Skip.h */,
+				39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */,
+			);
+			path = NSInputStreamSkip;
+			sourceTree = "<group>";
+		};
 		CBB1064121F709CD007BA09A = {
 			isa = PBXGroup;
 			children = (
@@ -157,6 +169,7 @@
 			children = (
 				CBB1068E21F71102007BA09A /* XMLock.h */,
 				CBB1068F21F712B0007BA09A /* Const.h */,
+				39B62183235C7C8F00F372D4 /* NSInputStreamSkip */,
 				CBB1069A21F83619007BA09A /* LocalizedManager */,
 			);
 			path = Utils;
@@ -328,6 +341,7 @@
 				CBB1068721F710F8007BA09A /* DownloadManager.m in Sources */,
 				CBB1069D21F8361A007BA09A /* LocalizedManager.m in Sources */,
 				CB9C66D822E1B30700889DB6 /* LocalAuthentication.m in Sources */,
+				39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
