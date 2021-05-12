@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04BA6F24264BA5E200CCFE49 /* BLEConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 04BA6F23264BA5E200CCFE49 /* BLEConfig.m */; };
 		39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */; };
 		CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */; };
 		CB9C66D322E185BA00889DB6 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D222E185BA00889DB6 /* WebViewController.m */; };
@@ -38,6 +39,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04BA6F22264BA5E200CCFE49 /* BLEConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLEConfig.h; sourceTree = "<group>"; };
+		04BA6F23264BA5E200CCFE49 /* BLEConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLEConfig.m; sourceTree = "<group>"; };
 		39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInputStream+Skip.m"; sourceTree = "<group>"; };
 		39B62185235C7C8F00F372D4 /* NSInputStream+Skip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInputStream+Skip.h"; sourceTree = "<group>"; };
 		CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellAutoCalculate.m; sourceTree = "<group>"; };
@@ -102,6 +105,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		04BA6F21264BA5CF00CCFE49 /* BLE */ = {
+			isa = PBXGroup;
+			children = (
+				04BA6F22264BA5E200CCFE49 /* BLEConfig.h */,
+				04BA6F23264BA5E200CCFE49 /* BLEConfig.m */,
+			);
+			path = BLE;
+			sourceTree = "<group>";
+		};
 		39B62183235C7C8F00F372D4 /* NSInputStreamSkip */ = {
 			isa = PBXGroup;
 			children = (
@@ -160,6 +172,7 @@
 				CB9C66D222E185BA00889DB6 /* WebViewController.m */,
 				CB9C66D722E1B30700889DB6 /* LocalAuthentication.m */,
 				CB9C66D922E1B4C300889DB6 /* Share.m */,
+				04BA6F21264BA5CF00CCFE49 /* BLE */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -342,6 +355,7 @@
 				CBB1069D21F8361A007BA09A /* LocalizedManager.m in Sources */,
 				CB9C66D822E1B30700889DB6 /* LocalAuthentication.m in Sources */,
 				39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */,
+				04BA6F24264BA5E200CCFE49 /* BLEConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
