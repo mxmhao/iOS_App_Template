@@ -2,7 +2,7 @@
 //  EventKitTemplate.m
 //  iOS_App_Template
 //
-//  Created by macmini on 2021/6/16.
+//  Created by min on 2021/6/16.
 //  Copyright © 2021 mxm. All rights reserved.
 //
 
@@ -35,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
+//iOS10以后获得授权要在plist文件中进行设置：添加权限字符串访问日历:NSCalendarsUsageDescription 访问提醒事项:NSRemindersUsageDescription
+//https://blog.csdn.net/a1661408343/article/details/106356670
 @implementation EventKitTemplate
 
 static EKEventStore *es;

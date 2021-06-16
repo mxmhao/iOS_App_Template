@@ -60,7 +60,8 @@
     return address;
 }
 
-//获取当前连接Wi-Fi的名称
+//获取Wi-Fi列表 https://juejin.cn/post/6844903529618866183
+//获取当前连接Wi-Fi的名称, https://zhuanlan.zhihu.com/p/76119256
 + (NSString *)getCurrentWiFiName
 {
 //        如果是iOS13以上 未开启地理位置权限 需要提示一下
