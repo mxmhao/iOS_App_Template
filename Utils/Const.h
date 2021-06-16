@@ -48,3 +48,5 @@ NSString * mimeTypeForFileAtPath(NSString *path)
 #endif
 
 #endif /* Const_h */
+
+#define NSStringFromeBOOL(x) (x) ? @"YES" : @"NO"
