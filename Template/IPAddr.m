@@ -96,6 +96,7 @@
                 break;
             }
         }
+//        kCNNetworkInfoKeySSID
         return info[@"SSID"];//BSSID是Mac地址
     }
 //    NSArray<NEHotspotNetwork *> *hns = [NEHotspotHelper supportedNetworkInterfaces];
