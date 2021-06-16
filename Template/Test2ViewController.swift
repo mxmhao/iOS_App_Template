@@ -39,7 +39,7 @@ class Test2ViewController: UIViewController {
      规则 3
         便利构造器最后必须调用指定构造器。
      
-     两段式构造过程：请查百度
+     两段式构造过程：请自己google
      */
 //    init() {
 ////        super.init()//根据上面👆规则，UIViewController没有继承init()方法，所以不能直接调用，而指定构造器必须调用其直接父类的的指定构造器。
