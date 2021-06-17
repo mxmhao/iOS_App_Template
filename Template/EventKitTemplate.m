@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 //iOS10以后获得授权要在plist文件中进行设置：添加权限字符串访问日历:NSCalendarsUsageDescription 访问提醒事项:NSRemindersUsageDescription
+//https://www.jianshu.com/p/50751ba43b32
 //https://blog.csdn.net/a1661408343/article/details/106356670
 @implementation EventKitTemplate
 

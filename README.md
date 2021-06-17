@@ -21,5 +21,5 @@ iOS工具类和模板代码
 9. [身份验证，生物识别：LocalAuthentication.m](/Template/LocalAuthentication.m)
 10. [分享（社会化）：Share.m](/Template/Share.m)  
 11. [蓝牙BLE：BLE/](/Template/BLE)  
-12. [坑爹的 ViewController的init指定构造器：Test2ViewController.swift](/Template/Test2ViewController.swift)  
+12. [Swift坑爹的 ViewController的init指定构造器：Test2ViewController.swift](/Template/Test2ViewController.swift)  
 13. [系统日历事件和提醒：EventKitTemplate.m](/Template/EventKitTemplate.m) 
