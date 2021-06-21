@@ -60,51 +60,135 @@
     return address;
 }
 
+//项目中还有很多其他的配置要添加，请参照以下链接：
 //获取Wi-Fi列表 https://juejin.cn/post/6844903529618866183
 //获取当前连接Wi-Fi的名称, https://zhuanlan.zhihu.com/p/76119256
-+ (NSString *)getCurrentWiFiName
+//https://blog.csdn.net/iOS1501101533/article/details/109306856
++ (NSString *)fetchWiFiName
 {
-//        如果是iOS13以上 未开启地理位置权限 需要提示一下
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
-       CLLocationManager *locationManager = [[CLLocationManager alloc] init];
-       if (@available(iOS 14.0, *)) {
-           /**
-            Info.plist文件中加入
-            <key>NSLocationTemporaryUsageDescriptionDictionary</key>
-            <dict>
-                <key>FetchWiFiNameUsageDescription</key>
-                <string>APP需要获取当前WiFi信息</string>
-            </dict>
-            */
-           //获取精确定位
-           [locationManager requestTemporaryFullAccuracyAuthorizationWithPurposeKey:@"FetchWiFiNameUsageDescription"];
-       } else if (@available(iOS 13.0, *)) {
-           //获取定位权限
-           [locationManager requestWhenInUseAuthorization];
-       }
+//    NSArray *ifs = (__bridge_transfer id)CNCopySupportedInterfaces();
+//    id info = nil;
+//    for (NSString *ifname in ifs) {
+//        info = (__bridge_transfer id)CNCopyCurrentNetworkInfo((__bridge CFStringRef)ifname);
+//        if (info && [info count]) {
+//            break;
+//        }
+//    }
+//    return info[@"SSID"];//BSSID是Mac地址
+        
+    CFArrayRef wifiInterfaces = CNCopySupportedInterfaces();
+    if (!wifiInterfaces || CFArrayGetCount(wifiInterfaces) <= 0) {
+        return nil;
     }
-    if (@available(iOS 14.0, *)) {
-#warning 这里是回调,请自行处理返回值.
-        [NEHotspotNetwork fetchCurrentWithCompletionHandler:^(NEHotspotNetwork * _Nullable currentNetwork) {
-            NSLog(@"%@<--", currentNetwork.SSID);//BSSID是Mac地址, iOS14
-        }];
-    } else {
-        NSArray *ifs = (__bridge_transfer id)CNCopySupportedInterfaces();
-        id info = nil;
-        for (NSString *ifnam in ifs) {
-            info = (__bridge_transfer id)CNCopyCurrentNetworkInfo((__bridge CFStringRef)ifnam);
-            if (info && [info count]) {
-                break;
-            }
+    NSString *wifiName = nil;
+    CFIndex count = CFArrayGetCount(wifiInterfaces);
+    for (CFIndex i = 0; i < count; i++) {
+        CFDictionaryRef infoDic = CNCopyCurrentNetworkInfo(CFArrayGetValueAtIndex(wifiInterfaces, i));
+        if (infoDic) {
+            wifiName = CFDictionaryGetValue(infoDic, kCNNetworkInfoKeySSID);//BSSID是Mac地址
+            CFRelease(infoDic);
+            break;
         }
-//        kCNNetworkInfoKeySSID
-        return info[@"SSID"];//BSSID是Mac地址
     }
+    CFRelease(wifiInterfaces);
+    return wifiName;
+
 //    NSArray<NEHotspotNetwork *> *hns = [NEHotspotHelper supportedNetworkInterfaces];
 //    NSLog(@"%@", hns);
 //    return hns.firstObject.SSID;
+}
+
++ (instancetype)shared
+{
+    static dispatch_once_t onceToken;
+    static NetUtils *instance;
+    dispatch_once(&onceToken, ^{
+        instance = [self new];
+    });
+    return instance;
+}
+
+typedef void(^WiFiResult)(NSString * _Nullable wifiName);
+
+static CLLocationManager *lm;
+static WiFiResult wifiResult;
++ (void)fetchCurrentWiFiName:(WiFiResult)result
+{
+    if (!CLLocationManager.locationServicesEnabled) return;
     
-    return nil;
+    wifiResult = [result copy];
+    lm = [CLLocationManager new];
+    lm.delegate = [self shared];
+}
+
+static void doReslut(BOOL authorized)
+{
+    lm = nil;
+    if (nil == wifiResult) return;
+    if (!authorized) {
+        wifiResult(nil);
+        wifiResult = nil;
+        return;
+    }
+    if (@available(iOS 14.0, *)) {
+        [NEHotspotNetwork fetchCurrentWithCompletionHandler:^(NEHotspotNetwork * _Nullable currentNetwork) {
+            wifiResult(currentNetwork.SSID);
+            wifiResult = nil;
+        }];
+    } else {
+        wifiResult([NetUtils fetchWiFiName]);
+        wifiResult = nil;
+    }
+}
+
+- (BOOL)hasAuthorized:(CLLocationManager *)manager status:(CLAuthorizationStatus)status
+{
+    switch (status) {
+        case kCLAuthorizationStatusNotDetermined:
+            [manager requestWhenInUseAuthorization];
+            return NO;
+        case kCLAuthorizationStatusRestricted:// 定位服务授权状态是受限制的。可能是由于活动限制定位服务，用户不能改变。这个状态可能不是用户拒绝的定位服务。
+            //提醒用户跳到设置界面打开定位权限
+            doReslut(NO);
+//            [lm requestWhenInUseAuthorization];//此状态下申请也不会有弹框
+            return NO;
+        case kCLAuthorizationStatusDenied://已经被用户明确禁止定位
+            //提醒用户跳到设置界面打开定位权限
+            doReslut(NO);
+//            [lm requestWhenInUseAuthorization];//此状态下申请也不会有弹框
+            return NO;
+            
+        default:
+            return YES;
+    }
+}
+
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager API_AVAILABLE(ios(14.0))
+{
+    if (![self hasAuthorized:manager status:manager.authorizationStatus]) {
+        return;
+    }
+    
+    static BOOL first = YES;
+    if (manager.accuracyAuthorization == CLAccuracyAuthorizationFullAccuracy) {
+        doReslut(YES);
+        first = YES;
+        return;
+    }
+    if (first) {
+        [manager requestTemporaryFullAccuracyAuthorizationWithPurposeKey:@"FetchWiFiNameUsageDescription"];
+        first = NO;
+    } else {
+        doReslut(NO);
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (![self hasAuthorized:manager status:status]) {
+        return;
+    }
+    doReslut(YES);
 }
 
 //连接Wi-Fi, ssid: Wi-Fi名称
