@@ -85,6 +85,18 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
 
 - (void)scanBLE
 {
+    if (@available(iOS 13.0, *)) {
+        CBManagerAuthorization auth;
+        if (@available(iOS 13.1, *)) {
+            auth = CBCentralManager.authorization;
+        } else {
+            auth = _centralManager.authorization;
+        }
+        if (auth != CBManagerAuthorizationNotDetermined && auth <= CBManagerAuthorizationDenied) {
+//            [self.delegate didFailToScan:-1 message:@"没有蓝牙访问权限" callbackId:callbackId];
+            return;
+        }
+    }
     if (_centralManager.state <= CBManagerStatePoweredOff) {
         return;
     }
