@@ -209,9 +209,9 @@ static void doReslut(BOOL authorized)
     }];
 }
 
+//监听WiFi切换
 + (void)onWiFiChange
 {
-    //监听WiFi切换
     CFNotificationCenterAddObserver(
         CFNotificationCenterGetDarwinNotifyCenter(), //center
         (__bridge const void *)([NSObject class]), // observer，要有这个，不然下面的无法删除

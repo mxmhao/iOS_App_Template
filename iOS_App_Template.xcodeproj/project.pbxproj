@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		04BA6F24264BA5E200CCFE49 /* BLEConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 04BA6F23264BA5E200CCFE49 /* BLEConfig.m */; };
 		39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */; };
+		9A28752A2693EADA002B046A /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2875292693EADA002B046A /* NetworkExtension.framework */; };
 		9AB18E23267830C8000A6E5B /* Test2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E22267830C8000A6E5B /* Test2ViewController.swift */; };
 		9AB18E252679B7ED000A6E5B /* EventKitTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */; };
 		CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */; };
@@ -45,6 +46,8 @@
 		04BA6F23264BA5E200CCFE49 /* BLEConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLEConfig.m; sourceTree = "<group>"; };
 		39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInputStream+Skip.m"; sourceTree = "<group>"; };
 		39B62185235C7C8F00F372D4 /* NSInputStream+Skip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInputStream+Skip.h"; sourceTree = "<group>"; };
+		9A2875272693EAD4002B046A /* iOS_App_Template.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOS_App_Template.entitlements; sourceTree = "<group>"; };
+		9A2875292693EADA002B046A /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		9AB18E22267830C8000A6E5B /* Test2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test2ViewController.swift; sourceTree = "<group>"; };
 		9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EventKitTemplate.m; sourceTree = "<group>"; };
 		CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellAutoCalculate.m; sourceTree = "<group>"; };
@@ -103,6 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A28752A2693EADA002B046A /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +131,14 @@
 			path = NSInputStreamSkip;
 			sourceTree = "<group>";
 		};
+		9A2875282693EADA002B046A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9A2875292693EADA002B046A /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CBB1064121F709CD007BA09A = {
 			isa = PBXGroup;
 			children = (
@@ -134,6 +146,7 @@
 				CBB1066321F70A55007BA09A /* Template */,
 				CBB1066421F70A55007BA09A /* Utils */,
 				CBB1064B21F709CD007BA09A /* Products */,
+				9A2875282693EADA002B046A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -148,6 +161,7 @@
 		CBB1064C21F709CD007BA09A /* iOS_App_Template */ = {
 			isa = PBXGroup;
 			children = (
+				9A2875272693EAD4002B046A /* iOS_App_Template.entitlements */,
 				CBB1064D21F709CD007BA09A /* AppDelegate.h */,
 				CBB1064E21F709CD007BA09A /* AppDelegate.m */,
 				CBB1065021F709CD007BA09A /* ViewController.h */,
@@ -507,6 +521,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = iOS_App_Template/iOS_App_Template.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = iOS_App_Template/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -526,6 +541,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = iOS_App_Template/iOS_App_Template.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = iOS_App_Template/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
