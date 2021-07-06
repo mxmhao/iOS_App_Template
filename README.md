@@ -14,7 +14,7 @@ iOS工具类和模板代码
 3. [后台上传：Upload/](/Template/Upload)  
         [上传下载备份中用到的：DownloadUploadBackupCommon/](/Template/DownloadUploadBackupCommon)
 4. [屏幕旋转控制：ShouldNotAutorotate/](/Template/ShouldNotAutorotate)
-5. [IP地址获取，当前Wi-Fi获取，连接Wi-Fi：IPAddr.m](/Template/IPAddr.m)
+5. [IP地址获取，当前Wi-Fi获取，连接Wi-Fi，监听WiFi切换：IPAddr.m](/Template/IPAddr.m)
 6. [UITableViewCell侧滑删除，长按事件：TableViewTemplate.m](/Template/TableViewTemplate.m)
 7. [UITableViewCell高度自适应：TableViewCellAutoCalculate.m](/Template/TableViewCellAutoCalculate.m)
 8. [WKWebView简单使用：WebViewController.m](/Template/WebViewController.m)

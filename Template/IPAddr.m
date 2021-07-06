@@ -4,8 +4,9 @@
 #import <SystemConfiguration/CaptiveNetwork.h>
 #import <CoreLocation/CoreLocation.h>
 #import <Foundation/Foundation.h>
+#import <UIKit/UIApplication.h>
 
-@interface NetUtils : NSObject
+@interface NetUtils : NSObject <CLLocationManagerDelegate>
 
 @end
 
@@ -64,18 +65,9 @@
 //获取Wi-Fi列表 https://juejin.cn/post/6844903529618866183
 //获取当前连接Wi-Fi的名称, https://zhuanlan.zhihu.com/p/76119256
 //https://blog.csdn.net/iOS1501101533/article/details/109306856
+//必须在“Signing & Capabilities”里添加“Access WiFi Information”
 + (NSString *)fetchWiFiName
 {
-//    NSArray *ifs = (__bridge_transfer id)CNCopySupportedInterfaces();
-//    id info = nil;
-//    for (NSString *ifname in ifs) {
-//        info = (__bridge_transfer id)CNCopyCurrentNetworkInfo((__bridge CFStringRef)ifname);
-//        if (info && [info count]) {
-//            break;
-//        }
-//    }
-//    return info[@"SSID"];//BSSID是Mac地址
-        
     CFArrayRef wifiInterfaces = CNCopySupportedInterfaces();
     if (!wifiInterfaces || CFArrayGetCount(wifiInterfaces) <= 0) {
         return nil;
@@ -92,10 +84,6 @@
     }
     CFRelease(wifiInterfaces);
     return wifiName;
-
-//    NSArray<NEHotspotNetwork *> *hns = [NEHotspotHelper supportedNetworkInterfaces];
-//    NSLog(@"%@", hns);
-//    return hns.firstObject.SSID;
 }
 
 + (instancetype)shared
@@ -112,9 +100,13 @@ typedef void(^WiFiResult)(NSString * _Nullable wifiName);
 
 static CLLocationManager *lm;
 static WiFiResult wifiResult;
+//必须在“Signing & Capabilities”里添加“Access WiFi Information”
 + (void)fetchCurrentWiFiName:(WiFiResult)result
 {
-    if (!CLLocationManager.locationServicesEnabled) return;
+    if (!CLLocationManager.locationServicesEnabled) {
+        result(nil);
+        return;
+    }
     
     wifiResult = [result copy];
     lm = [CLLocationManager new];
@@ -131,6 +123,7 @@ static void doReslut(BOOL authorized)
         return;
     }
     if (@available(iOS 14.0, *)) {
+        //必须在“Signing & Capabilities”里添加“Access WiFi Information”
         [NEHotspotNetwork fetchCurrentWithCompletionHandler:^(NEHotspotNetwork * _Nullable currentNetwork) {
             wifiResult(currentNetwork.SSID);
             wifiResult = nil;
@@ -176,6 +169,7 @@ static void doReslut(BOOL authorized)
         return;
     }
     if (first) {
+        //key在 info.plist中配置
         [manager requestTemporaryFullAccuracyAuthorizationWithPurposeKey:@"FetchWiFiNameUsageDescription"];
         first = NO;
     } else {
@@ -191,7 +185,16 @@ static void doReslut(BOOL authorized)
     doReslut(YES);
 }
 
-//连接Wi-Fi, ssid: Wi-Fi名称
+/**
+ 连接Wi-Fi, ssid: Wi-Fi名称。这个功能，不用申请权限。
+ 必须在“Signing & Capabilities”里添加“Hotspot Configuration”
+ SSID中不可以包含空格，否则无法连接成功
+ SSID填写错误或包含了空格，虽然会创建一个连接，但用户是无法连接网络成功的
+ 模拟器上无法运行
+ 手机系统必须为iOS 11及更高系统
+ 当重复创建连接时，会抛出一个错误，但用户任然能连接上
+ 若删除应用，所有创建的连接都会消失
+ */
 + (void)connectWiFi:(NSString *)ssid password:(NSString *)password
 {
     NEHotspotConfiguration *hc = [[NEHotspotConfiguration alloc] initWithSSID:ssid passphrase:password isWEP:NO];
@@ -204,6 +207,42 @@ static void doReslut(BOOL authorized)
             NSLog(@"已连接");
         }
     }];
+}
+
++ (void)onWiFiChange
+{
+    //监听WiFi切换
+    CFNotificationCenterAddObserver(
+        CFNotificationCenterGetDarwinNotifyCenter(), //center
+        (__bridge const void *)([NSObject class]), // observer，要有这个，不然下面的无法删除
+        onWiFiChangeCallback, // callback
+        CFSTR("com.apple.system.config.network_change"), // event name
+        NULL, // object
+        CFNotificationSuspensionBehaviorDeliverImmediately
+    );
+    //iOS10起App-Prefs:root=WIFI     iOS10之前prefs:root=WIFI
+    [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"App-Prefs:root=WIFI"] options:[NSDictionary dictionary] completionHandler:nil];
+}
+
+//WiFi切换回调
+static void onWiFiChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+
+{
+    NSString *notifyName = (__bridge NSString *)name;
+    if ([notifyName isEqualToString:@"com.apple.system.config.network_change"]) {
+        [NetUtils fetchCurrentWiFiName:^(NSString * _Nullable wifiName) {
+            NSLog(@"wifi name: %@", wifiName);
+        }];
+    } else {
+       NSLog(@"intercepted %@", notifyName);
+    }
+    //移除监听
+    CFNotificationCenterRemoveObserver(
+        CFNotificationCenterGetDarwinNotifyCenter(),
+        (__bridge const void *)([NSObject class]),//observer
+        CFSTR("com.apple.system.config.network_change"),
+        NULL
+    );
 }
 
 @end
