@@ -1,11 +1,12 @@
 # iOS_App_Template
-iOS工具类和模板代码
+iOS工具类和模板代码，简单高效
 
 ## [工具类在“/Utils/”目录下，一般可以直接使用](/Utils)
 1. [线程锁：XMLock.h](/Utils/XMLock.h)
 2. [常量，常用判断，MIME类型获取，调试日志：Const.h](/Utils/Const.h)
 3. [国际化，本地化：LocalizedManager/](/Utils/LocalizedManager)
-4. [NSInputStream添加跳过（skip）方法：NSInputStream+Skip/](/Utils/NSInputStreamSkip)
+4. [NSInputStream添加跳过（skip）方法：NSInputStream+Skip/](/Utils/NSInputStreamSkip)  
+5. [工具类，计算文件MD5：Utils.m](/Utils/Utils.m)
 
 
 ## [模板类在“/Template/”目录下，一般无法直接使用，主要用来参考里面的逻辑，或者直接修改模板代码](/Template)
@@ -22,4 +23,4 @@ iOS工具类和模板代码
 10. [分享（社会化）：Share.m](/Template/Share.m)  
 11. [蓝牙BLE：BLE/](/Template/BLE)  
 12. [Swift坑爹的 ViewController的init指定构造器：Test2ViewController.swift](/Template/Test2ViewController.swift)  
-13. [系统日历事件和提醒：EventKitTemplate.m](/Template/EventKitTemplate.m) 
+13. [系统日历事件和提醒：EventKitTemplate.m](/Template/EventKitTemplate.m)

@@ -7,8 +7,6 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol CBCentralManagerDelegate, CBPeripheralDelegate;
-
 @protocol BLEConfigDelegate <NSObject>
 //搜索到的蓝牙设备
 - (void)didDiscoverBles:(NSArray *_Nullable)bles;
@@ -27,7 +25,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BLEConfig : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
+@interface BLEUtils : NSObject
 
 @property (weak, nonatomic, nullable) id<BLEConfigDelegate> delegate;
 

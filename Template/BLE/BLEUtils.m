@@ -5,7 +5,7 @@
 //  Created by mac on 2021/4/28.
 //
 
-#import "BLEConfig.h"
+#import "BLEUtils.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 
 static unsigned short const crc16tab[] = {
@@ -39,7 +39,11 @@ unsigned short crc16_xmodem(unsigned char *ptr, unsigned int len)
 
 @end
 
-@implementation BLEConfig
+@interface BLEUtils () <CBCentralManagerDelegate, CBPeripheralDelegate>
+
+@end
+
+@implementation BLEUtils
 {
     CBCentralManager *_centralManager;
     CBPeripheral *_peripheral;//当前连接的设备
