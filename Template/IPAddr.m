@@ -227,12 +227,15 @@ static void doReslut(BOOL authorized)
 //WiFi切换回调
 static void onWiFiChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 
-{
+{//此回调是在主线程中运行
     NSString *notifyName = (__bridge NSString *)name;
     if ([notifyName isEqualToString:@"com.apple.system.config.network_change"]) {
-        [NetUtils fetchCurrentWiFiName:^(NSString * _Nullable wifiName) {
-            NSLog(@"wifi name: %@", wifiName);
-        }];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [NSThread sleepForTimeInterval:0.1];//有时候要等一下才能获取到WiFi名称
+            [NetUtils fetchCurrentWiFiName:^(NSString * _Nullable wifiName) {
+                NSLog(@"wifi name: %@", wifiName);
+            }];
+        });
     } else {
        NSLog(@"intercepted %@", notifyName);
     }
