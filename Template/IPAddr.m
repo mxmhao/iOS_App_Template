@@ -101,6 +101,7 @@ typedef void(^WiFiResult)(NSString * _Nullable wifiName);
 static CLLocationManager *lm;
 static WiFiResult wifiResult;
 //必须在“Signing & Capabilities”里添加“Access WiFi Information”
+//此方法必须在主线程中调用，因为CLLocationManager的一些操作会在主线程中
 + (void)fetchCurrentWiFiName:(WiFiResult)result
 {
     if (!CLLocationManager.locationServicesEnabled) {
@@ -230,12 +231,10 @@ static void onWiFiChangeCallback(CFNotificationCenterRef center, void *observer,
 {//此回调是在主线程中运行
     NSString *notifyName = (__bridge NSString *)name;
     if ([notifyName isEqualToString:@"com.apple.system.config.network_change"]) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [NSThread sleepForTimeInterval:0.1];//有时候要等一下才能获取到WiFi名称
-            [NetUtils fetchCurrentWiFiName:^(NSString * _Nullable wifiName) {
-                NSLog(@"wifi name: %@", wifiName);
-            }];
-        });
+        [NSThread sleepForTimeInterval:0.1];//有时候要等一下才能获取到WiFi名称
+        [NetUtils fetchCurrentWiFiName:^(NSString * _Nullable wifiName) {
+            NSLog(@"wifi name: %@", wifiName);
+        }];
     } else {
        NSLog(@"intercepted %@", notifyName);
     }
