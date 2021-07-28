@@ -110,8 +110,10 @@ static WiFiResult wifiResult;
     }
     
     wifiResult = [result copy];
-    lm = [CLLocationManager new];
-    lm.delegate = [self shared];
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        lm = [CLLocationManager new];
+        lm.delegate = [self shared];
+    });
 }
 
 static void doReslut(BOOL authorized)
