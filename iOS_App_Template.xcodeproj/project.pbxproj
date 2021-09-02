@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		04BA6F24264BA5E200CCFE49 /* BLEUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 04BA6F23264BA5E200CCFE49 /* BLEUtils.m */; };
 		39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */; };
+		9A1953C726E07479002DEF71 /* LaunchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1953C626E07479002DEF71 /* LaunchViewController.m */; };
 		9A28752A2693EADA002B046A /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2875292693EADA002B046A /* NetworkExtension.framework */; };
 		9AB18E23267830C8000A6E5B /* Test2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E22267830C8000A6E5B /* Test2ViewController.swift */; };
 		9AB18E252679B7ED000A6E5B /* EventKitTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */; };
@@ -46,6 +47,7 @@
 		04BA6F23264BA5E200CCFE49 /* BLEUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLEUtils.m; sourceTree = "<group>"; };
 		39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInputStream+Skip.m"; sourceTree = "<group>"; };
 		39B62185235C7C8F00F372D4 /* NSInputStream+Skip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInputStream+Skip.h"; sourceTree = "<group>"; };
+		9A1953C626E07479002DEF71 /* LaunchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaunchViewController.m; sourceTree = "<group>"; };
 		9A2875272693EAD4002B046A /* iOS_App_Template.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOS_App_Template.entitlements; sourceTree = "<group>"; };
 		9A2875292693EADA002B046A /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		9A66F201269BC54F0042BF52 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				CB9C66D922E1B4C300889DB6 /* Share.m */,
 				9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */,
 				9AB18E22267830C8000A6E5B /* Test2ViewController.swift */,
+				9A1953C626E07479002DEF71 /* LaunchViewController.m */,
 				04BA6F21264BA5CF00CCFE49 /* BLE */,
 			);
 			path = Template;
@@ -359,6 +362,7 @@
 			files = (
 				9AB18E23267830C8000A6E5B /* Test2ViewController.swift in Sources */,
 				CBB1068621F710F8007BA09A /* DownloadDSAD.m in Sources */,
+				9A1953C726E07479002DEF71 /* LaunchViewController.m in Sources */,
 				CBB1068C21F710F8007BA09A /* XMPhotosRequestManager+Utils.m in Sources */,
 				CBB1068321F710F8007BA09A /* UploadDSAD.m in Sources */,
 				CB9C66D322E185BA00889DB6 /* WebViewController.m in Sources */,

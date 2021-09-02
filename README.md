@@ -23,4 +23,5 @@ iOS工具类和模板代码，简单高效
 10. [分享（社会化）：Share.m](/Template/Share.m)  
 11. [蓝牙BLE：BLE/](/Template/BLE)  
 12. [Swift坑爹的 ViewController的init指定构造器：Test2ViewController.swift](/Template/Test2ViewController.swift)  
-13. [系统日历事件和提醒：EventKitTemplate.m](/Template/EventKitTemplate.m)
+13. [系统日历事件和提醒：EventKitTemplate.m](/Template/EventKitTemplate.m)  
+14. [制作一个和启动页一模一样的页面，动态替换启动页：LaunchViewController.m](/Template/LaunchViewController.m)
