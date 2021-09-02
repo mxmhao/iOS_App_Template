@@ -2,7 +2,7 @@
 //  BLEUtils.m
 //  
 //
-//  Created by mac on 2021/4/28.
+//  Created by min on 2021/4/28.
 //
 
 #import "BLEUtils.h"
@@ -68,9 +68,10 @@ typedef void(^FetchState)(NSInteger state);
     NSTimer *_cancelConnTimer;  //延迟取消连接
     NSTimer *_waitOpenBluetoothTimer;  //等待蓝牙开启
     
-    NSString *_callbackId;
+    BLEScanResult _result;
     FetchState _fetchState;
     BOOL _isScaning;
+    BLEConfigCompletion _configCompletion;
 }
 
 //根据你们的协议去修改
@@ -107,9 +108,16 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
     }
 }
 
-- (void)scanDevice:(NSString *)callbackId
+- (NSInteger)bleState
 {
-    _callbackId = callbackId;
+    //在刚创建_centralManager时这里返回的state是0、1，还是等待centralManagerDidUpdateState的结果吧
+    return _centralManager.state - CBManagerStatePoweredOn;
+}
+
+#pragma mark - 扫描返回结果
+static NSString *currWifiName;
+- (void)scanDevice:(BLEScanResult)result
+{
     if (@available(iOS 13.0, *)) {
         CBManagerAuthorization auth;
         if (@available(iOS 13.1, *)) {
@@ -118,9 +126,14 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
             auth = _centralManager.authorization;
         }
         if (CBManagerAuthorizationRestricted == auth || CBManagerAuthorizationDenied == auth) {
-            [self.delegate didFailToScan:-3 message:@"没有蓝牙访问权限" callbackId:callbackId];
+            if (result) {
+                result(-3, nil, @"没有蓝牙访问权限");
+            }
             return;
         }
+    }
+    if (result) {
+        _result = [result copy];
     }
     if (_centralManager.state <= CBManagerStatePoweredOff) {
         NSLog(@"bluetooth state:%ld", _centralManager.state);
@@ -140,7 +153,7 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
         CBCentralManagerScanOptionAllowDuplicatesKey : @NO,
     };
     NSArray *uuids = @[
-//        [CBUUID UUIDWithString:@"00aa"]
+//        [CBUUID UUIDWithString:@"00FF"]
     ];
     [_centralManager scanForPeripheralsWithServices:uuids options:option];
     _isScaning = YES;
@@ -185,13 +198,19 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
         [arr addObject:device];
     }
     //把数据返回给前端显示
-    [self->_delegate didDiscoverBles:arr callbackId:self->_callbackId];
+    if (_result) {
+        _result(0, arr, nil);
+    }
+    _result = nil;
 }
 
-- (void)connectBLE:(NSString *)name message:(NSString *)message
+#pragma mark - 配网
+- (void)sendMessage:(NSString *)message bleName:(NSString *)name completion:(BLEConfigCompletion)completion
 {
     if (_bles.count == 0) {//要不要给用户提示
-        [_delegate didFailToConnect];
+        if (completion) {
+            completion(-1, nil, @"未找到扫描过的BLE设备");
+        }
         return;//没有数据
     }
     if (_peripheral && _peripheral.state == CBPeripheralStateConnected) {
@@ -200,9 +219,12 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
     
     CBPeripheral *per = _bles[name];
     if (nil == per) {//要不要给用户提示
-        [_delegate didFailToConnect];
+        if (completion) {
+            completion(-1, nil, @"未找到扫描过的BLE设备");
+        }
         return;
     }
+    _configCompletion = [completion copy];
     _dataPkgs = [BleDataBuilder buildPkgs:message];
     [_centralManager connectPeripheral:per options:nil];//发起连接的命令
     //连接超时要停止
@@ -253,8 +275,10 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
         //3次都没收到ack回复，断开重连
         [self disConnect];
         //还要给用户一个提示？
-        [_delegate didFailToSendNetworkSettings];
-//        [_delegate resultFromBle:nil code:-1 message:@"3次都没收到ack回复，断开重连"];
+        if (_configCompletion) {
+            _configCompletion(-10, nil, @"3次都没收到ack回复，断开重连");
+        }
+        _configCompletion = nil;
     }
 }
 
@@ -304,36 +328,37 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
             break;
         case CBManagerStateUnauthorized:
             NSLog(@"CBManagerStateUnauthorized");
-            if (nil != _callbackId) {
-                [self.delegate didFailToScan:-3 message:@"没有蓝牙访问权限" callbackId:_callbackId];
+            if (_result) {
+                _result(-3, nil, @"没有蓝牙访问权限");
             }
+            _result = nil;
             break;
         case CBManagerStatePoweredOff:
         {
             NSLog(@"CBManagerStatePoweredOff");
             if (_isScaning) {
                 NSLog(@"关了还扫？");
-                if (nil != _callbackId) {
-                    [self.delegate didDiscoverBles:nil callbackId:_callbackId];
+                if (_result) {
+                    _result(0, nil, @"主动关了蓝牙");
                 }
-                _callbackId = nil;
+                _result = nil;
                 _isScaning = NO;
                 return;
             }
-            if (nil == _callbackId) {
+            if (nil == _result) {
                 return;
             }
             //通知用户请打开蓝牙
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                CFTimeInterval waitTime = 10;
+                CFTimeInterval waitTime = 30;
                 self->_waitOpenBluetoothTimer = [NSTimer scheduledTimerWithTimeInterval:waitTime repeats:NO block:^(NSTimer * _Nonnull timer) {
                     if (nil == self) {
                         return;
                     }
-                    if (nil != self->_callbackId) {
-                        [self.delegate didDiscoverBles:nil callbackId:self->_callbackId];
+                    if (self->_result) {
+                        self->_result(0, nil, @"蓝牙还没开");
                     }
-                    self->_callbackId = nil;
+                    self->_result = nil;
                 }];
                 [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:waitTime+0.1]];
             });
@@ -345,8 +370,8 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
                 [_waitOpenBluetoothTimer invalidate];
                 _waitOpenBluetoothTimer = nil;
             }
-            if (nil != _callbackId) {
-                [self scanDevice:_callbackId];
+            if (_result) {
+                [self scanDevice:nil];
             }
             break;
     }
@@ -361,6 +386,16 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
 {
     NSString *name = advertisementData[CBAdvertisementDataLocalNameKey];
     if (![name hasPrefix:BLE_NAME_Prefix]) return;
+    if (_bles[name] != nil && ![peripheral.identifier isEqual:_bles[name].identifier]) {
+        NSString *newName;
+        for (UInt8 i=2; i < UINT8_MAX; ++i) {
+            newName = [name stringByAppendingFormat:@"-%u", i];
+            if (_bles[newName] == nil) {
+                name = newName;
+                break;
+            }
+        }
+    }
     [_bles setObject:peripheral forKey:name];
     NSLog(@"%@ -- %@", name, peripheral.name);//有些时候这两个名字不一样，最好要嵌入式那边做成一样
     NSLog(@"advertisementData: %@，\nRSSI:%@", advertisementData, RSSI);
@@ -375,8 +410,9 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
         _cancelConnTimer = nil;
     }
     //要不要给用户一个提示？
-    [_delegate didConnect];
-//    [_delegate resultFromBle:nil code:1 message:@"已连接到蓝牙外设"];
+    if (_configCompletion) {
+        _configCompletion(1, nil, @"已连接到蓝牙外设");
+    }
     _peripheral = peripheral;
     peripheral.delegate = self;
     //连接成功之后寻找服务，传nil会寻找所有服务
@@ -394,8 +430,10 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
     }
     [central cancelPeripheralConnection:peripheral];
     //要不要给用户一个提示?
-    [_delegate didFailToConnect];
-//    [_delegate resultFromBle:nil code:-2 message:@"连接蓝牙失败"];
+    if (_configCompletion) {
+        _configCompletion(-1, nil, @"连接蓝牙失败");
+    }
+    _configCompletion = nil;
 
     NSLog(@"连接失败: %@", error);
 //    _deviceConnTimes++;
@@ -422,8 +460,10 @@ static NSString * const BLE_UUID_Characteristic_IN = @"0002";//read/write/notify
 {
     if (error || peripheral.services.count == 0) {
         [self disConnect];
-        [_delegate didFailToSendNetworkSettings];
-//        [_delegate resultFromBle:nil code:-3 message:@"找不到我们需要的蓝牙服务"];
+        if (_configCompletion) {
+            _configCompletion(-2, nil, @"找不到我们需要的蓝牙服务");
+        }
+        _configCompletion = nil;
         NSLog(@"查找服务失败：%@", error);
         return;
     }
@@ -442,8 +482,10 @@ didDiscoverCharacteristicsForService:(CBService *)service
 {
     if (error || service.characteristics.count == 0) {
         [self disConnect];
-        [_delegate didFailToSendNetworkSettings];
-//        [_delegate resultFromBle:nil code:-4 message:@"找不到我们需要的蓝牙特征"];
+        if (_configCompletion) {
+            _configCompletion(-3, nil, @"找不到我们需要的蓝牙特征");
+        }
+        _configCompletion = nil;
         NSLog(@"查找特征失败: %@", error);
         return;
     }
@@ -480,8 +522,10 @@ didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
 //    NSLog(@"back uuid: %@", characteristic.UUID);
     if (error) {//这里都出错了，再发数据都没意义了？手机或者蓝牙外设出问题了？
         [self disConnect];
-        [_delegate didFailToSendNetworkSettings];
-//        [_delegate resultFromBle:nil code:-5 message:@"给蓝牙外设写数据写失败了"];
+        if (_configCompletion) {
+            _configCompletion(-4, nil, @"给蓝牙外设写数据写失败了");
+        }
+        _configCompletion = nil;
         NSLog(@"===写入错误：%@", error);
 //        [self resendPackage:_dataPkgs[_dataIndex]];
     } else if (_returnAck) {//写入成功了，但是没ack反馈，有可能是这里回调快点，下面的ack反馈慢点
@@ -496,8 +540,10 @@ didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
 {
     if (error) {
         [self disConnect];
-        [_delegate didFailToSendNetworkSettings];
-//        [_delegate resultFromBle:nil code:-6 message:@"监听蓝牙外设失败，收不到蓝牙数据的"];
+        if (_configCompletion) {
+            _configCompletion(-5, nil, @"监听蓝牙外设失败，收不到蓝牙数据的");
+        }
+        _configCompletion = nil;
         NSLog(@"设置监听出错: %@", error);
     }
     NSLog(@"订阅状态变了 uuid: %@,: %d", characteristic.UUID, characteristic.isNotifying);
@@ -517,8 +563,10 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     if (error) {//出错了要干嘛？这个错误比较严重，重发意义不大？手机或者蓝牙外设出问题了？
 //        [self resendPackage:_dataPkgs[_dataIndex]];//重发？
         [self disConnect];
-        [_delegate didFailToSendNetworkSettings];
-//        [_delegate resultFromBle:nil code:-7 message:@"蓝牙外设给我回数据出错了"];
+        if (_configCompletion) {
+            _configCompletion(-6, nil, @"蓝牙外设给我回数据出错了");
+        }
+        _configCompletion = nil;
         NSLog(@"didUpdateValue: %@", error);
         return;
     }
@@ -538,11 +586,15 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
         NSDictionary *result = [BleDataBuilder buildResultData:data];
         if (nil == result) {
             [self disConnect];
-//            [_delegate resultFromBle:nil code:-8 message:@"蓝牙外设发来的包无法用Json解析"];
+            if (_configCompletion) {
+                _configCompletion(-7, nil, @"蓝牙外设发来的包无法用Json解析");
+            }
+            _configCompletion = nil;
             return;
         }
         int const code = [result[@"code"] intValue];
         /**
+         此code由嵌入式和前端约定
          code：
             0   已经连上服务器了，
             1   开始去连接路由器，
@@ -553,8 +605,12 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
             [_waitResultTimer invalidate];//有结果返回了就取消定时
             [self disConnect];
         }
-        [_delegate resultFromBle:result];
-//        [_delegate resultFromBle:result code:0 message:@"蓝牙外设发过来的包"];
+        if (_configCompletion) {
+            _configCompletion(0, result, @"蓝牙外设发过来的包");
+        }
+        if (code == 0 || code == -1) {
+            _configCompletion = nil;
+        }
         return;
     }
     NSLog(@"%@, 蓝牙ack回复：%@", characteristic.UUID, data);
@@ -562,8 +618,10 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     if ([BleDataBuilder isSendDataCheckError:data]) {//校验数据有误需要重发此包？这里重发意义不大，要么数据有问题，要么校验算法有问题，要么蓝牙外设的校验有问题。尽量不考虑传输过程中出现的错误，如果是这个错误就得检查手机或者外设的蓝牙有没有问题了，测出失败概率
 //        [self resendPackage:_dataPkgs[_dataIndex]];
         [self disConnect];
-        [_delegate didFailToSendNetworkSettings];
-//        [_delegate resultFromBle:nil code:-9 message:@"给蓝牙外设发的包没通过数据校验"];
+        if (_configCompletion) {
+            _configCompletion(-8, nil, @"给蓝牙外设发的包没通过数据校验");
+        }
+        _configCompletion = nil;
         return;
     }
     
@@ -576,8 +634,9 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     }
     //配网包发完了
     //配网信息发送成功，要不要给用户一个提示？
-    [_delegate didSendNetworkSettings];
-//    [_delegate resultFromBle:nil code:2 message:@"给蓝牙外设的配网信息包已经发完了"];
+    if (_configCompletion) {
+        _configCompletion(2, nil, @"给蓝牙外设的配网信息包已经发完了");
+    }
     NSLog(@"配网包发完了");
     __weak __typeof(self)weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -589,12 +648,20 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
                 return;
             }
             [self disConnect];
-            [self->_delegate resultFromBle:nil];//
-//            [self->_delegate resultFromBle:nil code:-10 message:@"等待蓝牙返回结果超时了"];
+            if (self->_configCompletion) {
+                self->_configCompletion(-9, nil, @"等待蓝牙返回结果超时了");
+            }
+            self->_configCompletion = nil;
             NSLog(@"--蓝牙等待结果超时");
         }];
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:waitTime+0.1]];
     });
+}
+
+- (void)finish
+{
+    [_waitResultTimer invalidate];//有结果返回了就取消定时
+    [self disConnect];
 }
 
 @end
