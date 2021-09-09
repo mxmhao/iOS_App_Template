@@ -38,6 +38,8 @@ NSString * mimeTypeForFileAtPath(NSString *path)
     if (!MIMEType) {
         return @"application/octet-stream";
     }
+    //iOS14起的MIMEType获取方式，还得引入： #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+//    [UTType typeWithFilenameExtension:ext].preferredMIMEType]
     return (__bridge NSString *)(MIMEType);
 }
 
