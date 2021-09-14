@@ -11,6 +11,7 @@
 		39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B62184235C7C8F00F372D4 /* NSInputStream+Skip.m */; };
 		9A1953C726E07479002DEF71 /* LaunchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1953C626E07479002DEF71 /* LaunchViewController.m */; };
 		9A28752A2693EADA002B046A /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2875292693EADA002B046A /* NetworkExtension.framework */; };
+		9A9CB97726F0292D00F8107D /* ScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A9CB97626F0292D00F8107D /* ScanViewController.m */; };
 		9AB18E23267830C8000A6E5B /* Test2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E22267830C8000A6E5B /* Test2ViewController.swift */; };
 		9AB18E252679B7ED000A6E5B /* EventKitTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */; };
 		CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */; };
@@ -52,6 +53,7 @@
 		9A2875292693EADA002B046A /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		9A66F201269BC54F0042BF52 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		9A66F202269BC54F0042BF52 /* Utils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
+		9A9CB97626F0292D00F8107D /* ScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanViewController.m; sourceTree = "<group>"; };
 		9AB18E22267830C8000A6E5B /* Test2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test2ViewController.swift; sourceTree = "<group>"; };
 		9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EventKitTemplate.m; sourceTree = "<group>"; };
 		CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellAutoCalculate.m; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */,
 				9AB18E22267830C8000A6E5B /* Test2ViewController.swift */,
 				9A1953C626E07479002DEF71 /* LaunchViewController.m */,
+				9A9CB97626F0292D00F8107D /* ScanViewController.m */,
 				04BA6F21264BA5CF00CCFE49 /* BLE */,
 			);
 			path = Template;
@@ -371,6 +374,7 @@
 				CB9C66DA22E1B4C300889DB6 /* Share.m in Sources */,
 				CBB1068A21F710F8007BA09A /* User.mm in Sources */,
 				CB9C66D622E1ABC000889DB6 /* TransferCell.m in Sources */,
+				9A9CB97726F0292D00F8107D /* ScanViewController.m in Sources */,
 				CBB1065221F709CD007BA09A /* ViewController.m in Sources */,
 				CBB1065D21F709CF007BA09A /* main.m in Sources */,
 				CBB1068421F710F8007BA09A /* UploadManager.m in Sources */,
