@@ -396,6 +396,8 @@ static NSString *currWifiName;
             }
         }
     }
+    //peripheral.name 是获取的 Service UUID=1800 下 Characteristic UUID=2A00 的属性值，这个属性被iOS屏蔽了，但能在安卓蓝牙调试App中看到Generic Access下的Device Name。若要保持 CBAdvertisementDataLocalNameKey 和 peripheral.name 获取到的值一致，请找嵌入式工程师修改蓝牙模块。
+    //peripheral.name 值会被iOS缓存，当蓝牙外设模块修改名称后，会导致和安卓显示的名称不一样，但连接后缓存会被更新。
     [_bles setObject:peripheral forKey:name];
     NSLog(@"%@ -- %@", name, peripheral.name);//有些时候这两个名字不一样，最好要嵌入式那边做成一样
     NSLog(@"advertisementData: %@，\nRSSI:%@", advertisementData, RSSI);
