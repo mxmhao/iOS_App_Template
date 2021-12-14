@@ -5,6 +5,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIApplication.h>
+#import <notify_keys.h>
 
 @interface NetUtils : NSObject <CLLocationManagerDelegate>
 
@@ -219,7 +220,7 @@ static void doReslut(BOOL authorized)
         CFNotificationCenterGetDarwinNotifyCenter(), //center
         (__bridge const void *)([NSObject class]), // observer，要有这个，不然下面的无法删除
         onWiFiChangeCallback, // callback
-        CFSTR("com.apple.system.config.network_change"), // event name
+        CFSTR(kNotifySCNetworkChange), // event name
         NULL, // object
         CFNotificationSuspensionBehaviorDeliverImmediately
     );
@@ -232,7 +233,8 @@ static void onWiFiChangeCallback(CFNotificationCenterRef center, void *observer,
 
 {//此回调是在主线程中运行
     NSString *notifyName = (__bridge NSString *)name;
-    if ([notifyName isEqualToString:@"com.apple.system.config.network_change"]) {
+//    if ([notifyName isEqualToString:@"com.apple.system.config.network_change"]) {
+    if (CFStringCompare(name, CFSTR(kNotifySCNetworkChange), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
         [NSThread sleepForTimeInterval:0.1];//有时候要等一下才能获取到WiFi名称
         [NetUtils fetchCurrentWiFiName:^(NSString * _Nullable wifiName) {
             NSLog(@"wifi name: %@", wifiName);
@@ -244,7 +246,7 @@ static void onWiFiChangeCallback(CFNotificationCenterRef center, void *observer,
     CFNotificationCenterRemoveObserver(
         CFNotificationCenterGetDarwinNotifyCenter(),
         (__bridge const void *)([NSObject class]),//observer
-        CFSTR("com.apple.system.config.network_change"),
+        CFSTR(kNotifySCNetworkChange),
         NULL
     );
 }
