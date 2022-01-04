@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Utils : NSObject
 
 + (NSString *)md5OfFileAtPath:(NSString *)filePath;
+//图片缩略图
++ (UIImage *)IOCompressImage:(NSData *)data size:(CGSize)size;
 
 @end
 
