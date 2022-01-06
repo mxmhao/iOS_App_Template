@@ -13,6 +13,7 @@
 
 @end
 
+//要在 TARGETS -> General 加入 AVFoundation 依赖库
 @implementation SpeechUtils
 {
     AVSpeechSynthesizer *_avSpeaker;
