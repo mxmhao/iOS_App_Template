@@ -24,7 +24,7 @@
     _avSpeaker = [[AVSpeechSynthesizer alloc] init];
     _avSpeaker.delegate = self;
     //初始化要说出的内容
-    AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:@"循环了%d次"];
+    AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:@"6 6 6"];
     //设置语速,语速介于AVSpeechUtteranceMaximumSpeechRate和AVSpeechUtteranceMinimumSpeechRate之间
     //AVSpeechUtteranceMaximumSpeechRate
     //AVSpeechUtteranceMinimumSpeechRate
