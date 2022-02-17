@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 # 使用方法
-# 1.将shell.sh和附件中的plist，放在一起，新建文件夹为Shell，将这几文件复制进去，然后复制Shell文件夹到工程的根目录
-# 2.终端cd到Shell下，执行脚本 格式为 sh 脚本名字.sh
+# 1.将shell.sh和附件中的Development_ExportOptions.plist，一起放到工程的根目录下
+# 2.终端cd到工程的根目录下，执行脚本 格式为 sh 脚本名字.sh
 
 # 配置信息
 
