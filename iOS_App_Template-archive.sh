@@ -43,7 +43,7 @@ configRun () {
 #    info_plist_path="${project_name}/${project_name}-Info.plist"
     # 方式二：从设置中获取
     #获取需要的所有设置
-    build_settings=`xcodebuild -showBuildSettings | grep ' INFOPLIST_FILE \|MARKETING_VERSION \| CURRENT_PROJECT_VERSION'`
+    build_settings=`xcodebuild -showBuildSettings | grep ' INFOPLIST_FILE \| MARKETING_VERSION \| CURRENT_PROJECT_VERSION '`
     #获取 INFOPLIST_FILE 设置
     info_plist_path=`echo $build_settings | grep INFOPLIST_FILE`
     #截取 '= ' 后面的类容

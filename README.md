@@ -26,4 +26,5 @@ iOS工具类和模板代码，简单高效
 13. [系统日历事件和提醒：EventKitTemplate.m](/Template/EventKitTemplate.m)  
 14. [制作一个和启动页一模一样的页面，动态替换启动页：LaunchViewController.m](/Template/LaunchViewController.m)  
 15. [纯代码实现iOS原生扫描，图片二维码识别：ScanViewController.m](/Template/ScanViewController.m)  
-16. [文字转语音：SpeechUtils.m](/Template/SpeechUtils.m)
+16. [文字转语音：SpeechUtils.m](/Template/SpeechUtils.m)  
+17. [shell自动打包脚本：iOS_App_Template-archive.sh](/iOS_App_Template-archive.sh)
