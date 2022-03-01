@@ -5,6 +5,12 @@
 //  Created by mxm on 2018/8/13.
 //  Copyright © 2018年 mxm. All rights reserved.
 //
+//  https://cloud.tencent.com/developer/article/1861389
+//  https://cloud.tencent.com/developer/article/1464845
+//  Cordova的第三方插件库：
+//  https://capacitorjs.com/docs/apis
+//  https://ionicframework.com/docs/native
+//
 //window.webkit.messageHandlers.showName.postMessage('有一个参数')
 //window.webkit.messageHandlers.showSendMsg.postMessage(['两个参数One', '两个参数Two'])
 
