@@ -224,8 +224,9 @@ static void doReslut(BOOL authorized)
         NULL, // object
         CFNotificationSuspensionBehaviorDeliverImmediately
     );
-    //iOS10起App-Prefs:root=WIFI     iOS10之前prefs:root=WIFI
-    [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"App-Prefs:root=WIFI"] options:[NSDictionary dictionary] completionHandler:nil];
+    //iOS10起App-Prefs:root=WIFI， iOS10之前prefs:root=WIFI      这个是网上流传的，无效
+    //iOS11.3 起 App-Prefs:WIFI， 之前用 app-settings:WIFI       这个有效
+    [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"App-Prefs:WIFI"] options:[NSDictionary dictionary] completionHandler:nil];
 }
 
 //WiFi切换回调
