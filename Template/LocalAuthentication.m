@@ -8,6 +8,11 @@
 
 #import <LocalAuthentication/LocalAuthentication.h>
 
+@interface LocalAuthentication : NSObject
+@end
+
+@implementation LocalAuthentication
+
 - (void)LocalAuthentication
 {
     /*
@@ -88,3 +93,4 @@
     }];
 }
 
+@end
