@@ -216,6 +216,7 @@ static void doReslut(BOOL authorized)
 //监听WiFi切换
 + (void)onWiFiChange
 {
+    //CFNotificationCenterGetDarwinNotifyCenter 可用于 扩展与app 之间的通信，只可惜不能传递参数
     CFNotificationCenterAddObserver(
         CFNotificationCenterGetDarwinNotifyCenter(), //center
         (__bridge const void *)([NSObject class]), // observer，要有这个，不然下面的无法删除
@@ -229,7 +230,7 @@ static void doReslut(BOOL authorized)
     [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"App-Prefs:WIFI"] options:[NSDictionary dictionary] completionHandler:nil];
 }
 
-//WiFi切换回调
+//WiFi切换回调，CFNotificationCenterGetDarwinNotifyCenter下忽略 object 和 userInfo 参数
 static void onWiFiChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 
 {//此回调是在主线程中运行
