@@ -206,10 +206,41 @@ static NSString *const USERAGENT = @"my app";
     NSLog(@"");
 }
 
-#pragma mark 当内容开始返回时调用
+#pragma mark 当内容开始返回时调用，cordova类似的混合开发框架可以在这里注入指定js文件
 - (void)webView:(WKWebView *)webView didCommitNavigation:(null_unspecified WKNavigation *)navigation
 {
     NSLog(@"");
+    /**
+     在一个JavaScript文件或一个JavaScript代码块的内部，浏览器会先对代码进行预处理（编译），然后再执行。
+     预处理会跳过执行语句，只处理声明语句，同样也是按从上到下按顺序进行的。包括变量和函数在内的所有声明都会在任何代码被执行前首先被处理。 即使声明是在调用的下方进行的，但浏览器仍然先声明再调用（执行），这个现象叫做“提升”。所以，即便一个函数的声明在下方，在前面仍然可以正常执行这个函数。
+     注意1：对于声明并赋值的语句，例如 var a = 1，在预处理阶段会把这句话拆成两句：
+     var a;
+     a = 1;
+     也就是说，赋值或其他逻辑运算是在执行阶段进行的，在预处理阶段会被忽略。
+
+     注意2：（1）函数声明的提升优先于变量声明的提升；（2）重复的var声明会被忽略掉，但是重复的function声明会覆盖掉前面的声明。
+
+     在预处理阶段，声明的变量的初始值是undefined, 采用function声明的函数的初始内容就是函数体的内容.
+     */
+    NSString *src = nil;
+    if (webView.URL.isFileURL) {
+        //"file://xxxx.index" 本地文件url
+        src = [@"file:///" stringByAppendingString:[NSBundle.mainBundle pathForResource:@"www/cordova.js" ofType:nil]];
+    } else {
+        //远程url，注入"file://"方式无效，只能起一个本地服务。GCDWebServer本地服务库是一个不错的选择。
+//        @autoreleasepool {
+//            _webServer = [GCDWebServer new];
+//            [_webServer addGETHandlerForBasePath:@"/" directoryPath:[NSBundle.mainBundle pathForResource:@"www" ofType:nil] indexFilename:nil cacheAge:1 allowRangeRequests:NO];
+//            [_webServer startWithPort:9090 bonjourName:nil];
+//        }
+        src = @"http://localhost:9090/cordova.js";
+    }
+    NSString *script =
+        @"var sc = document.createElement('script');\n"
+        @"sc.src = '%@';\n"
+        @"sc.type = 'text/javascript';\n"
+        @"document.head.appendChild(sc);";
+    [webView evaluateJavaScript:[NSString stringWithFormat:script, src] completionHandler:nil];
 }
 
 #pragma mark 页面加载完成之后调用
