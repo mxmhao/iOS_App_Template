@@ -6,7 +6,7 @@ iOS工具类和模板代码，简单高效
 2. [常量，常用判断，MIME类型获取，调试日志：Const.h](/Utils/Const.h)
 3. [国际化，本地化：LocalizedManager/](/Utils/LocalizedManager)
 4. [NSInputStream添加跳过（skip）方法：NSInputStream+Skip/](/Utils/NSInputStreamSkip)  
-5. [工具类，计算文件MD5、创建图片缩略图：Utils.m](/Utils/Utils.m)
+5. [工具类，计算文件MD5、创建图片缩略图、获取文件夹大小、获取可用存储空间大小：Utils.m](/Utils/Utils.m)
 
 
 ## [模板类在“/Template/”目录下，一般无法直接使用，主要用来参考里面的逻辑，或者直接修改模板代码](/Template)
