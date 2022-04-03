@@ -9,6 +9,7 @@
 #import "Utils.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <UIKit/UIImage.h>
+#import <sys/mount.h>
 
 @implementation Utils
 
@@ -89,6 +90,54 @@
     CFRelease(thumbnailImage);
     
     return resultImg;
+}
+
+// 获取文件夹大小
++ (unsigned long long)fetchDirSize:(NSString *)dirPath
+{
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSDirectoryEnumerator *de = [fm enumeratorAtPath:dirPath];
+    unsigned long long size = 0;
+    for (NSString *subpath in de) {
+//        NSLog(@"%@", subpath);
+        size += [fm attributesOfItemAtPath:[dirPath stringByAppendingPathComponent:subpath] error:NULL].fileSize;
+    }
+    // 格式化方式：[NSByteCountFormatter stringFromByteCount:size countStyle:NSByteCountFormatterCountStyleFile]
+    return size;
+}
+
+// 获取可用存储空间大小
++ (uint64_t)availableSpace
+{
+    uint64_t totalSpace;
+    uint64_t totalFreeSpace;
+    uint64_t totalUsedSpace;
+    
+    // 以下两种方式都可获取
+    NSError *error = nil;
+    NSDictionary *dictionary = [NSFileManager.defaultManager attributesOfFileSystemForPath:NSHomeDirectory() error:&error];
+    if (error) {
+        NSLog(@"availableSpace: %@", error);
+        return 0;
+    }
+    if (dictionary) {
+        totalFreeSpace = [dictionary[NSFileSystemFreeSize] unsignedLongLongValue];
+        totalSpace = [dictionary[NSFileSystemSize] unsignedLongLongValue];
+        totalUsedSpace = totalSpace - totalFreeSpace;
+        NSLog(@"total: %@, free: %@, used: %@", [NSByteCountFormatter stringFromByteCount:totalSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalFreeSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalUsedSpace countStyle:NSByteCountFormatterCountStyleFile]);
+        return totalFreeSpace;
+    }
+    
+    return 0;
+//    struct statfs buf;
+//    if (statfs("/", &buf) >= 0) {
+//        // f_bavail 普通应用程序可用空间，f_bfree 包括保留块（普通应用程序无法使用）在内的可用空间
+//        totalFreeSpace = buf.f_bsize * buf.f_bavail;
+//        totalSpace = buf.f_bsize * buf.f_blocks;
+//        totalUsedSpace = totalSpace - totalFreeSpace;
+//    }
+//    NSLog(@"total: %@, free: %@, used: %@", [NSByteCountFormatter stringFromByteCount:totalSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalFreeSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalUsedSpace countStyle:NSByteCountFormatterCountStyleFile]);
+    // 以上两种方式可结果一样
 }
 
 @end
