@@ -96,6 +96,7 @@
 + (unsigned long long)fetchDirSize:(NSString *)dirPath
 {
     NSFileManager *fm = NSFileManager.defaultManager;
+    // 应该比 subpathsAtPath 方法节省内存
     NSDirectoryEnumerator *de = [fm enumeratorAtPath:dirPath];
     unsigned long long size = 0;
     for (NSString *subpath in de) {
@@ -137,7 +138,7 @@
 //        totalUsedSpace = totalSpace - totalFreeSpace;
 //    }
 //    NSLog(@"total: %@, free: %@, used: %@", [NSByteCountFormatter stringFromByteCount:totalSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalFreeSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalUsedSpace countStyle:NSByteCountFormatterCountStyleFile]);
-    // 以上两种方式可结果一样
+    // 以上两种方式的结果一样
 }
 
 @end
