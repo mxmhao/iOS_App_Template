@@ -198,11 +198,31 @@ static void doReslut(BOOL authorized)
  手机系统必须为iOS 11及更高系统
  当重复创建连接时，会抛出一个错误，但用户任然能连接上
  若删除应用，所有创建的连接都会消失
+ 
+ https://qa.1r1g.com/sf/ask/4028706671/
+ 苹果的文档指出：
+ 如果joinOnce设置为true，则仅在配置了热点的应用程序在前台运行时，热点才会保持配置和连接。发生以下任何事件时，都会断开热点并删除其配置：
+
+ 该应用程序在后台停留超过15秒。
+ 设备进入睡眠状态。
+ 该应用程序崩溃，退出或被卸载。
+ 该应用程序将设备连接到其他Wi-Fi网络。
+ 也许我的应用被错误地识别为前景。
+
+ 设置joinOnce为false可使应用程序保持连接状态，但这不是可接受的解决方案，因为我的设备热点不提供Internet连接，因此不能在应用程序外部使用。
+ 设置joinOnce = false，但在这种情况下，如果未检测到 Internet连接，可能会提示用户切换到蜂窝网络。用户不会在后台自动切换，但切换到蜂窝网络是首选选项。
  */
 + (void)connectWiFi:(NSString *)ssid password:(NSString *)password
 {
     NEHotspotConfiguration *hc = [[NEHotspotConfiguration alloc] initWithSSID:ssid passphrase:password isWEP:NO];
+    hc.joinOnce = YES;
     [[NEHotspotConfigurationManager sharedManager] applyConfiguration:hc completionHandler:^(NSError * _Nullable error) {
+        /*
+         不过这里倒是有个奇怪的地方。applyConfiguration方法的回调，密码错误，不对什么的回调没有error。明明是有NEHotspotConfigurationError这个枚举的。
+
+         所以这个时候你判断是否加入成功就不能通过有没有error来判断了。
+         你可以判断ssid名跟你配置的是否一致来判断。
+         */
         if (error && error.code != NEHotspotConfigurationErrorAlreadyAssociated && error.code != NEHotspotConfigurationErrorUserDenied) {
             NSLog(@"加入失败");
         } else if(error.code == NEHotspotConfigurationErrorUserDenied){
