@@ -15,6 +15,7 @@
 //window.webkit.messageHandlers.showSendMsg.postMessage(['两个参数One', '两个参数Two'])
 
 #import <WebKit/WebKit.h>
+#import "URLSchemeHandler.h"
 //#import <UIKit/UIKit.h>
 
 //window.webkit.messageHandlers.nativeBack.postMessage(null)//空参数
@@ -28,6 +29,13 @@ static NSString *const JsCallNativeFuncLogout = @"nativeLogout";
     WKNavigation *_wkNav;
 }
 
+@end
+
+@interface NSObject (WKBackForwardList)
+- (void)_removeAllItems;
+@end
+@implementation NSObject (WKBackForwardList)
+- (void)_removeAllItems {}
 @end
 
 @implementation WebViewController
@@ -61,6 +69,10 @@ static NSString *const USERAGENT = @"my app";
     config.preferences.javaScriptEnabled = YES;
     //js是否可以打开窗口
     config.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    
+    // 这里添加 URLSchemeHandler 是为了能自动注入cordova.js
+    URLSchemeHandler *urlSchemeHandler = [[URLSchemeHandler alloc] init];
+    [config setURLSchemeHandler:urlSchemeHandler forURLScheme:@"app"];
     
     //ios11之前组装cookie
     NSString *cookieValue = [NSString stringWithFormat:@"document.cookie='session=%@';document.cookie='user=%@';", @"sessionid", @"user"];//path=/';
@@ -151,6 +163,113 @@ static NSString *const USERAGENT = @"my app";
     [self presentViewController:ac animated:YES completion:nil];
 }
 
+- (void)reloadUrl:(NSString *)path params:(NSString *)params clearHistory:(BOOL)clear
+{
+    if (nil == path || (id)kCFNull == path || [@"" isEqualToString:path]) {
+        path = @"你的首页地址url";
+        if (params) {
+            path = [path stringByAppendingString:params];
+        }
+//        path = [path stringByReplacingOccurrencesOfString:@"?" withString:@"#/?"];
+        [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:path] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0]];
+//        NSNumber *clearHistory = args[kLoadUrlClearHistory];//clearHistory
+        // 默认清理历史记录
+        if (clear) {
+            // 这里不能放入延迟清理，否则，进入控制页再退出控制页，然后进到其他页面，就无法返回了。这是个严重的bug。
+            [self clearHistory:_webView];
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            });
+        }
+        return;
+    }
+
+//    NSRange range = [path rangeOfString:@"?"];
+    //这两个是为了防止自动被添加上的#转成%23
+    if (![path containsString:@"#/?"]) {
+        path = [path stringByReplacingOccurrencesOfString:@"?" withString:@"#/?"];
+    }
+    NSURL *url = nil;
+    if ([path hasPrefix:@"http"]) {
+        url = [NSURL URLWithString:path];
+    } else {
+        url = [NSURL URLWithString:[@"file://" stringByAppendingString:path]];
+    }
+    
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad:) name:CDVPageDidLoadNotification object:nil];
+    [_webView loadRequest:[NSURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0]];
+    // 默认清理历史记录
+    if (clear) {
+        // 这里不能放入延迟清理，否则，进入控制页再退出控制页，然后进到其他页面，就无法返回了。这是个严重的bug。
+        [self clearHistory:_webView];
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        });
+    }
+}
+
+- (void)clearHistory:(WKWebView *)view
+{
+    // 方式一：由于Apple公司加强了源码安全分析，此方法在xcode14以后可能无法提交到appstore
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+//    [((WKWebView *)view).backForwardList performSelector:NSSelectorFromString(@"_removeAllItems")];
+//#pragma clang diagnostic pop
+    // 这里用了点小技巧，给 backForwardList 的父类通过分类的方式添加了_removeAllItems方法，就能通过多态的方式调到私有方法。
+    [view.backForwardList _removeAllItems];
+}
+
+// 本地webview缓存大小
++ (unsigned long long)cacheSize
+{
+    NSString *path = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject stringByAppendingPathComponent:@"WebKit"];//NetworkCache最大
+    NSFileManager *fm = NSFileManager.defaultManager;
+    NSDirectoryEnumerator *de = [fm enumeratorAtPath:path];
+    unsigned long long size = 0;
+    for (NSString *subpath in de) {
+//        NSLog(@"%@", subpath);
+        size += [fm attributesOfItemAtPath:[path stringByAppendingPathComponent:subpath] error:NULL].fileSize;
+    }
+    return size;
+}
+
+// 清理本地缓存
++ (void)clearCache
+{
+    NSSet *websiteDataTypes;
+    if (@available(iOS 11.3, *)) {
+        websiteDataTypes = [NSSet setWithArray:@[
+            WKWebsiteDataTypeFetchCache,
+            WKWebsiteDataTypeDiskCache,
+            //WKWebsiteDataTypeOfflineWebApplicationCache,
+            WKWebsiteDataTypeMemoryCache,
+            //WKWebsiteDataTypeLocalStorage,
+            //WKWebsiteDataTypeCookies,
+            //WKWebsiteDataTypeSessionStorage,
+            //WKWebsiteDataTypeIndexedDBDatabases,
+            //WKWebsiteDataTypeWebSQLDatabases,
+            //WKWebsiteDataTypeServiceWorkerRegistrations
+        ]];
+    } else {
+        websiteDataTypes = [NSSet setWithArray:@[
+//            WKWebsiteDataTypeFetchCache,
+            WKWebsiteDataTypeDiskCache,
+            //WKWebsiteDataTypeOfflineWebApplicationCache,
+            WKWebsiteDataTypeMemoryCache,
+            //WKWebsiteDataTypeLocalStorage,
+            //WKWebsiteDataTypeCookies,
+            //WKWebsiteDataTypeSessionStorage,
+            //WKWebsiteDataTypeIndexedDBDatabases,
+            //WKWebsiteDataTypeWebSQLDatabases,
+            //WKWebsiteDataTypeServiceWorkerRegistrations
+        ]];
+    }
+    // All kinds of data
+    //NSSet *websiteDataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+    // Date from
+    NSDate *dateFrom = [NSDate dateWithTimeIntervalSince1970:0];
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:dateFrom completionHandler:^{
+    }];
+}
+
 #pragma mark - WKScriptMessageHandler
 //js调用原生方法
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -222,9 +341,12 @@ static NSString *const USERAGENT = @"my app";
 
      在预处理阶段，声明的变量的初始值是undefined, 采用function声明的函数的初始内容就是函数体的内容.
      */
+    // 方式一：
     NSString *src = nil;
     if (webView.URL.isFileURL) {
-        //"file://xxxx.index" 本地文件url
+        // allowingReadAccessToURL 指定了本地允许访问的根目录，如果本地访问的文件不在此目录，就被称为跨域访问。跨域访问请考虑下面的方式二
+//        webView loadFileURL:<#(nonnull NSURL *)#> allowingReadAccessToURL:<#(nonnull NSURL *)#>
+        //"file://xxxx.index" 本地文件url，此方式在跨域时会加载失败。
         src = [@"file:///" stringByAppendingString:[NSBundle.mainBundle pathForResource:@"www/cordova.js" ofType:nil]];
     } else {
         //远程url，注入"file://"方式无效，只能起一个本地服务。GCDWebServer本地服务库是一个不错的选择。
@@ -241,6 +363,29 @@ static NSString *const USERAGENT = @"my app";
         @"sc.type = 'text/javascript';\n"
         @"document.head.appendChild(sc);";
     [webView evaluateJavaScript:[NSString stringWithFormat:script, src] completionHandler:nil];
+    
+    // 方式二：--------------------------------------------------------------
+    /*
+     这种方式最高效，且跨域也能加载，前提是 WKWebViewConfiguration 设置了 URLSchemeHandler
+     WKWebViewConfiguration *config = [WKWebViewConfiguration new];
+     
+     // 这里添加 URLSchemeHandler 是为了能自动注入cordova.js
+     URLSchemeHandler *urlSchemeHandler = [[URLSchemeHandler alloc] init];
+     [config setURLSchemeHandler:urlSchemeHandler forURLScheme:@"app"];
+    */
+//    NSString *file = [NSBundle.mainBundle pathForResource:@"www/cordova.js" ofType:nil];
+    /*
+     这里的写法要配合 URLSchemeHandler 中协议方法的写法
+     "app://" 是固定的，[config setURLSchemeHandler: forURLScheme:] 指定了，在 URLSchemeHandler 的协议方法中[webView: startURLSchemeTask:] 也做了匹配。
+     "local" 作为 host 在 URLSchemeHandler 的协议方法中[webView: startURLSchemeTask:] 未匹配，可以随便写
+     "_app_file_" 作为 path 在 URLSchemeHandler 的协议方法中[webView: startURLSchemeTask:] 做了匹配，表示本地文件
+     */
+//    NSString *script =
+//        @"var sc = document.createElement('script');\n"
+//        @"sc.src = 'app://local/_app_file_%@';\n"
+//        @"sc.type = 'text/javascript';\n"
+//        @"document.head.appendChild(sc);";
+//    [webView evaluateJavaScript:[NSString stringWithFormat:script, file] completionHandler:nil];
 }
 
 #pragma mark 页面加载完成之后调用
