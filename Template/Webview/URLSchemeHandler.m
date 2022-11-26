@@ -54,6 +54,7 @@
         }
     }
 
+    // 获取本地文件数据
     NSError * fileError = nil;
     NSData * data = nil;
     if ([self isMediaExtension:url.pathExtension]) {
