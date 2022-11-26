@@ -16,6 +16,7 @@
 		9A9CB97726F0292D00F8107D /* ScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A9CB97626F0292D00F8107D /* ScanViewController.m */; };
 		9AB18E23267830C8000A6E5B /* Test2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E22267830C8000A6E5B /* Test2ViewController.swift */; };
 		9AB18E252679B7ED000A6E5B /* EventKitTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */; };
+		9AFF81042931A697007B7DB5 /* MDNSManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFF81022931A697007B7DB5 /* MDNSManager.m */; };
 		CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */; };
 		CB9C66D322E185BA00889DB6 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D222E185BA00889DB6 /* WebViewController.m */; };
 		CB9C66D622E1ABC000889DB6 /* TransferCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9C66D422E1ABC000889DB6 /* TransferCell.m */; };
@@ -61,6 +62,8 @@
 		9A9CB97626F0292D00F8107D /* ScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanViewController.m; sourceTree = "<group>"; };
 		9AB18E22267830C8000A6E5B /* Test2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test2ViewController.swift; sourceTree = "<group>"; };
 		9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EventKitTemplate.m; sourceTree = "<group>"; };
+		9AFF81022931A697007B7DB5 /* MDNSManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDNSManager.m; sourceTree = "<group>"; };
+		9AFF81032931A697007B7DB5 /* MDNSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDNSManager.h; sourceTree = "<group>"; };
 		CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellAutoCalculate.m; sourceTree = "<group>"; };
 		CB9C66D222E185BA00889DB6 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		CB9C66D422E1ABC000889DB6 /* TransferCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransferCell.m; sourceTree = "<group>"; };
@@ -150,6 +153,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		9AFF81012931A697007B7DB5 /* MDNS */ = {
+			isa = PBXGroup;
+			children = (
+				9AFF81032931A697007B7DB5 /* MDNSManager.h */,
+				9AFF81022931A697007B7DB5 /* MDNSManager.m */,
+			);
+			path = MDNS;
+			sourceTree = "<group>";
+		};
 		CBB1064121F709CD007BA09A = {
 			isa = PBXGroup;
 			children = (
@@ -198,6 +210,7 @@
 				CBB1067221F710F8007BA09A /* DownloadUploadBackupCommon */,
 				CBB1068021F710F8007BA09A /* ShouldNotAutorotate */,
 				CBB1069621F80914007BA09A /* TableViewTemplate.m */,
+				9AFF81012931A697007B7DB5 /* MDNS */,
 				CB9C66D022DF2A8300889DB6 /* TableViewCellAutoCalculate.m */,
 				CB9C66D222E185BA00889DB6 /* WebViewController.m */,
 				CB9C66D722E1B30700889DB6 /* LocalAuthentication.m */,
@@ -391,6 +404,7 @@
 				CBB1068821F710F8007BA09A /* FileTask.mm in Sources */,
 				CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */,
 				CBB1064F21F709CD007BA09A /* AppDelegate.m in Sources */,
+				9AFF81042931A697007B7DB5 /* MDNSManager.m in Sources */,
 				CBB1068921F710F8007BA09A /* UIImage+Format.m in Sources */,
 				CBB1068D21F710F8007BA09A /* UIViewController+ShouldNotAutorotate.m in Sources */,
 				CBB1069121F71417007BA09A /* IPAddr.m in Sources */,

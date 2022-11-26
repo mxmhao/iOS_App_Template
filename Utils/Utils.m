@@ -8,6 +8,7 @@
 
 #import "Utils.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCrypto.h>
 #import <UIKit/UIImage.h>
 #import <sys/mount.h>
 
@@ -139,6 +140,244 @@
 //    }
 //    NSLog(@"total: %@, free: %@, used: %@", [NSByteCountFormatter stringFromByteCount:totalSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalFreeSpace countStyle:NSByteCountFormatterCountStyleFile], [NSByteCountFormatter stringFromByteCount:totalUsedSpace countStyle:NSByteCountFormatterCountStyleFile]);
     // 以上两种方式的结果一样
+}
+
+static size_t trimedBytesLength(Byte *const bytes, size_t const dataLen)
+{
+    size_t i = dataLen - 1;
+    for (; i >= 0; --i) {
+        if (0x00 != bytes[i]) {
+            return i + 1;
+        }
+    }
+    
+    if (16 == dataLen) {
+        return 1;
+    }
+    
+    return dataLen;
+}
+
+static const Byte iv[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6};
+
++ (NSData *)encryptUseAES128CBC:(NSData *)data key:(Byte *)key
+{
+    if (!data) return nil;
+    
+    NSUInteger len = data.length;
+    //AES/ECB/ZeroPadding 是16个byte为一组加密，最后一组不足16个byte要补0
+    int diff = kCCKeySizeAES128 - (len % kCCKeySizeAES128);
+    NSUInteger newLen = len;
+    if (diff > 0) {
+        newLen = len + diff;
+    }
+    Byte newData[newLen];
+    memcpy(newData, data.bytes, len);
+    memset(newData+len, 0, diff);
+//    for (NSUInteger i = len; i < newLen; i++) {
+//        newData[i] = 0x00;
+//    }
+    
+    NSLog(@"-- newLen: %lu", (unsigned long)newLen);
+    size_t bufferLen = newLen + kCCBlockSizeAES128;
+    NSLog(@"-- bufferLen: %zu", bufferLen);
+//    void *buffer = malloc(buffersize);
+    Byte buffer[bufferLen];
+    memset(buffer, 0, bufferLen);
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(
+        kCCEncrypt,
+        kCCAlgorithmAES128,
+        kNilOptions,
+        key,
+        kCCBlockSizeAES128,
+        iv,
+        newData,
+        newLen,
+        buffer,     //缓存结果
+        bufferLen,  //缓存的最大长度
+        &numBytesEncrypted  //加密过的
+    );
+    if (cryptStatus == kCCSuccess) return [NSData dataWithBytes:buffer length:numBytesEncrypted];
+    
+    return nil;
+}
+
++ (NSData *)decryptUseAES128CBC:(NSData *)data key:(Byte *)key
+{
+    if (!data) return nil;
+    
+    size_t bufferLen = data.length + kCCBlockSizeAES128;
+    NSLog(@"-- bufferLen: %zu", bufferLen);
+//    void *buffer = malloc(buffersize);
+    Byte buffer[bufferLen];
+    memset(buffer, 0, bufferLen);
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(
+        kCCDecrypt,
+        kCCAlgorithmAES128,
+        kNilOptions,
+        key,
+        kCCBlockSizeAES128,
+        iv,
+        data.bytes,
+        data.length,
+        buffer,     //缓存结果
+        bufferLen,  //缓存的最大长度
+        &numBytesEncrypted  //加密过的
+    );
+    if (cryptStatus == kCCSuccess) return [NSData dataWithBytes:buffer length:trimedBytesLength(buffer, numBytesEncrypted)];
+    
+    return nil;
+}
+
++ (NSData *)encryptUseAES128ECB:(NSData *)data key:(Byte *)key
+{
+    if (!data) return nil;
+    
+    NSUInteger len = data.length;
+    //AES/ECB/ZeroPadding 是16个byte为一组加密，最后一组不足16个byte要补0
+    int diff = kCCKeySizeAES128 - (len % kCCKeySizeAES128);
+    NSUInteger newLen = len;
+    if (diff > 0) {
+        newLen = len + diff;
+    }
+    Byte newData[newLen];
+    memcpy(newData, data.bytes, len);
+    memset(newData+len, 0, diff);
+//    for (NSUInteger i = len; i < newLen; i++) {
+//        newData[i] = 0x00;
+//    }
+    
+    NSLog(@"-- newLen: %lu", (unsigned long)newLen);
+    size_t bufferLen = newLen + kCCBlockSizeAES128;
+    NSLog(@"-- bufferLen: %zu", bufferLen);
+//    void *buffer = malloc(buffersize);
+    Byte buffer[bufferLen];
+    memset(buffer, 0, bufferLen);
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(
+        kCCEncrypt,
+        kCCAlgorithmAES,
+        kCCOptionECBMode,
+        key,
+        kCCBlockSizeAES128,
+        NULL,
+        newData,
+        newLen,
+        buffer,     //缓存结果
+        bufferLen,  //缓存的最大长度
+        &numBytesEncrypted  //加密过的
+    );
+    if (cryptStatus == kCCSuccess) return [NSData dataWithBytes:buffer length:numBytesEncrypted];
+    
+    return nil;
+}
+
++ (NSData *)decryptUseAES128ECB:(NSData *)data key:(Byte *)key
+{
+    if (!data) return nil;
+    
+    size_t bufferLen = data.length + kCCBlockSizeAES128;
+    NSLog(@"-- bufferLen: %zu", bufferLen);
+//    void *buffer = malloc(buffersize);
+    Byte buffer[bufferLen];
+    memset(buffer, 0, bufferLen);
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(
+        kCCDecrypt,
+        kCCAlgorithmAES,
+        kCCOptionECBMode,
+        key,
+        kCCBlockSizeAES128,
+        NULL,
+        data.bytes,
+        data.length,
+        buffer,     //缓存结果
+        bufferLen,  //缓存的最大长度
+        &numBytesEncrypted  //加密过的
+    );
+    if (cryptStatus == kCCSuccess) return [NSData dataWithBytes:buffer length:trimedBytesLength(buffer, numBytesEncrypted)];
+    
+    return nil;
+}
+
++ (NSData *)encryptUseAES128CBCPKCS7:(NSData *)data key:(Byte *)key
+{
+    if (!data) return nil;
+    
+    NSUInteger len = data.length;
+    
+    NSLog(@"-- Len: %lu", (unsigned long)len);
+    size_t bufferLen = len + kCCBlockSizeAES128;
+    NSLog(@"-- bufferLen: %zu", bufferLen);
+//    void *buffer = malloc(buffersize);
+    Byte buffer[bufferLen];
+    memset(buffer, 0, bufferLen);
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(
+        kCCEncrypt,
+        kCCAlgorithmAES128,
+        kCCOptionPKCS7Padding,
+        key,
+        kCCBlockSizeAES128,
+        iv,
+        data.bytes,
+        len,
+        buffer,     //缓存结果
+        bufferLen,  //缓存的最大长度
+        &numBytesEncrypted  //加密过的
+    );
+    if (cryptStatus == kCCSuccess) return [NSData dataWithBytes:buffer length:numBytesEncrypted];
+    
+    return nil;
+}
+
++ (NSData *)decryptUseAES128CBCPKCS7:(NSData *)data key:(Byte *)key
+{
+    if (!data) return nil;
+    
+    size_t bufferLen = data.length;
+    NSLog(@"-- bufferLen: %zu", bufferLen);
+//    void *buffer = malloc(buffersize);
+    Byte buffer[bufferLen];
+    memset(buffer, 0, bufferLen);
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(
+        kCCDecrypt,
+        kCCAlgorithmAES128,
+        kCCOptionPKCS7Padding,
+        key,
+        kCCBlockSizeAES128,
+        iv,
+        data.bytes,
+        data.length,
+        buffer,     //缓存结果
+        bufferLen,  //缓存的最大长度
+        &numBytesEncrypted  //加密过的
+    );
+    if (cryptStatus == kCCSuccess) return [NSData dataWithBytes:buffer length:numBytesEncrypted];
+    
+    return nil;
+}
+
+NSString * byte2HexString(Byte buf[], size_t len) {
+    const char hex [] = {
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
+
+    char chs[len * 2];
+    int index = 0;
+    Byte b;
+    for (int i = 0; i < len; ++i) {
+        b = buf[i];
+        chs[index] = hex[(b >> 4) & 0x0F];
+        ++index;
+        chs[index] = hex[b & 0x0F];
+        ++index;
+    }
+    return [[NSString alloc] initWithBytes:chs length:len * 2 encoding:NSUTF8StringEncoding];
 }
 
 @end

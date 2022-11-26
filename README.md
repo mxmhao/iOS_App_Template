@@ -6,7 +6,7 @@ iOS工具类和模板代码，简单高效
 2. [常量，常用判断，MIME类型获取，调试日志：Const.h](/Utils/Const.h)
 3. [国际化，本地化：LocalizedManager/](/Utils/LocalizedManager)
 4. [NSInputStream添加跳过（skip）方法：NSInputStream+Skip/](/Utils/NSInputStreamSkip)  
-5. [工具类，计算文件MD5、创建图片缩略图、获取文件夹大小、获取可用存储空间大小：Utils.m](/Utils/Utils.m)
+5. [工具类，计算文件MD5、创建图片缩略图、获取文件夹大小、获取可用存储空间大小、AES加解密：Utils.m](/Utils/Utils.m)
 
 
 ## [模板类在“/Template/”目录下，一般无法直接使用，主要用来参考里面的逻辑，或者直接修改模板代码](/Template)
@@ -27,4 +27,5 @@ iOS工具类和模板代码，简单高效
 14. [制作一个和启动页一模一样的页面，动态替换启动页：LaunchViewController.m](/Template/LaunchViewController.m)  
 15. [纯代码实现iOS原生扫描，图片二维码识别：ScanViewController.m](/Template/ScanViewController.m)  
 16. [文字转语音：SpeechUtils.m](/Template/SpeechUtils.m)  
-17. [shell自动打包脚本：iOS_App_Template-archive.sh](/iOS_App_Template-archive.sh)
+17. [shell自动打包脚本：iOS_App_Template-archive.sh](/iOS_App_Template-archive.sh)  
+18. [mDNS服务](/Template/MDNS)

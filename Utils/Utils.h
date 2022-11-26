@@ -21,6 +21,18 @@ NS_ASSUME_NONNULL_BEGIN
 // 获取可用存储空间大小
 + (uint64_t)availableSpace
 
++ (NSData *)encryptUseAES128CBC:(NSData *)data key:(Byte *)key;
+
++ (NSData *)decryptUseAES128CBC:(NSData *)data key:(Byte *)key;
+
++ (NSData *)encryptUseAES128ECB:(NSData *)data key:(Byte *)key;
+
++ (NSData *)decryptUseAES128ECB:(NSData *)data key:(Byte *)key;
+
++ (NSData *)encryptUseAES128CBCPKCS7:(NSData *)data key:(Byte *)key;
+
++ (NSData *)decryptUseAES128CBCPKCS7:(NSData *)data key:(Byte *)key;
+
 @end
 
 NS_ASSUME_NONNULL_END
