@@ -158,7 +158,7 @@ static size_t trimedBytesLength(Byte *const bytes, size_t const dataLen)
     return dataLen;
 }
 
-static const Byte iv[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6};
+static const Byte iv[] = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6};
 
 + (NSData *)encryptUseAES128CBC:(NSData *)data key:(Byte *)key
 {
