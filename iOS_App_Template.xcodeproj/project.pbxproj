@@ -57,6 +57,7 @@
 		9A1E499B2786E184006A32AC /* SpeechUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeechUtils.m; sourceTree = "<group>"; };
 		9A2875272693EAD4002B046A /* iOS_App_Template.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOS_App_Template.entitlements; sourceTree = "<group>"; };
 		9A2875292693EADA002B046A /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		9A47A1712953330A00D2E5AA /* _XMAutoLaunch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _XMAutoLaunch.m; sourceTree = "<group>"; };
 		9A5B818027BE19D400963DB6 /* Development_ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Development_ExportOptions.plist; sourceTree = SOURCE_ROOT; };
 		9A66F201269BC54F0042BF52 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		9A66F202269BC54F0042BF52 /* Utils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
@@ -244,6 +245,7 @@
 			children = (
 				CBB1068E21F71102007BA09A /* XMLock.h */,
 				CBB1068F21F712B0007BA09A /* Const.h */,
+				9A47A1712953330A00D2E5AA /* _XMAutoLaunch.m */,
 				39B62183235C7C8F00F372D4 /* NSInputStreamSkip */,
 				CBB1069A21F83619007BA09A /* LocalizedManager */,
 				9A66F201269BC54F0042BF52 /* Utils.h */,
