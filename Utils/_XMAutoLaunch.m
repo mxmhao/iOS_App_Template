@@ -9,20 +9,29 @@
 
 @end
 
+@interface XMAutoLaunch : NSObject
+
++ (void)xm_applicationDidFinishLaunchingNotification:(NSNotification *)notification;
+
+@end
+
 @implementation NSObject (XMAutoLaunch)
 
 #pragma mark - load
 + (void)load
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(xm_applicationDidFinishLaunchingNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:[XMAutoLaunch class] selector:@selector(xm_applicationDidFinishLaunchingNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 }
 
-static BOOL xm_applicationDidFinishLaunching = NO;
-#pragma mark - notification
+@end
+
+@implementation XMAutoLaunch
+
+// 此方法会在调用 - application:(UIApplication *) didFinishLaunchingWithOptions:(NSDictionary *) 之后调用
 + (void)xm_applicationDidFinishLaunchingNotification:(NSNotification *)notification
 {
-    if (xm_applicationDidFinishLaunching) return;
-    xm_applicationDidFinishLaunching = YES;
+    // 防止NSNotificationCenter删除其他开发者添加的监听，这里自己新建了一个类。
+    [[NSNotificationCenter defaultCenter] removeObserver:[XMAutoLaunch class]];
     
     // 处理自己的一些逻辑
 }
