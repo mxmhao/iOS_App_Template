@@ -6,7 +6,7 @@
 //  Copyright © 2019 mxm. All rights reserved.
 //
 
-#import <LocalAuthentication/LocalAuthentication.h>
+#import <Foundation/Foundation.h>
 
 @interface TemplateUtils : NSObject
 @end
