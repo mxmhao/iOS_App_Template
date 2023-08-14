@@ -29,4 +29,5 @@ iOS工具类和模板代码，简单高效
 15. [纯代码实现iOS原生扫描，图片二维码识别：ScanViewController.m](/Template/ScanViewController.m)  
 16. [文字转语音：SpeechUtils.m](/Template/SpeechUtils.m)  
 17. [shell自动打包脚本：iOS_App_Template-archive.sh](/iOS_App_Template-archive.sh)  
-18. [mDNS服务](/Template/MDNS)
+18. [mDNS服务](/Template/MDNS)  
+19. [一次性 GCD timer](/Template/TemplateUtils.m)
