@@ -6,7 +6,7 @@
 //  Copyright © 2019 mxm. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface TemplateUtils : NSObject
 @end
@@ -46,6 +46,61 @@ dispatch_source_t fetchGCDTimer(void) {
     dispatch_resume(timer);
     // 停止timer
     dispatch_source_cancel(timer);
+}
+
+/// 复制到剪切板
++ (void)copyToClipboard:(NSString *)text
+{
+    if (!text || text.length == 0) {
+        return;
+    }
+    UIPasteboard.generalPasteboard.string = text;
+}
+
+/// 使用iOS原生类请求 HTTP JSON
++ (void)postHttp:(NSURL *)url header:(NSDictionary *)headers body:(NSDictionary *)json completion:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completion
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:30];
+    request.HTTPMethod = @"POST";
+    for (NSString *key in headers) {
+        [request setValue:headers[key] forHTTPHeaderField:key];
+    }
+    [request setValue:@"application/json;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:NULL];
+    NSURLSessionDataTask *task = [NSURLSession.sharedSession dataTaskWithRequest:request completionHandler:completion];
+    [task resume];
+}
+
+/// 从AppStore获取版app最新本号
++ (void)fetchNewVersion
+{
+    /*
+     http 和 https 貌似都可
+     全球：
+     https://itunes.apple.com/lookup?id=
+     http://itunes.apple.com/lookup?bundleId=
+     中国：
+     https://itunes.apple.com/cn/lookup?id=
+     http://itunes.apple.com/cn/lookup?bundleId=
+     */
+    [[NSURLSession.sharedSession dataTaskWithURL:[NSURL URLWithString:[@"http://itunes.apple.com/lookup?bundleId=" stringByAppendingString:NSBundle.mainBundle.bundleIdentifier]] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) return;
+        
+        NSError *err;
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+        if (err) return;
+        //dic[@"resultCount"].intValue > 0
+//        NSLog(@"--: %@", dict);
+        NSArray *arr = dict[@"results"];
+        if (arr.count <= 0) return;
+        
+//        NSLog(@"--: %@", dic[@"resultCount"]);
+        NSDictionary *info = arr[0];
+        NSNumber *trackId = info[@"trackId"];
+        NSString *version = info[@"version"];
+        NSLog(@"--: %@", trackId);
+        NSLog(@"--: %@", version);
+    }] resume];
 }
 
 @end

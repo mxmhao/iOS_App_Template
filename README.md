@@ -30,4 +30,7 @@ iOS工具类和模板代码，简单高效
 16. [文字转语音：SpeechUtils.m](/Template/SpeechUtils.m)  
 17. [shell自动打包脚本：iOS_App_Template-archive.sh](/iOS_App_Template-archive.sh)  
 18. [mDNS服务](/Template/MDNS)  
-19. [一次性 GCD timer](/Template/TemplateUtils.m)
+19. [一次性 GCD timer](/Template/TemplateUtils.m)  
+20. [复制到剪切板](/Template/TemplateUtils.m)  
+21. [使用iOS原生类请求 HTTP JSON，不依赖第三方库](/Template/TemplateUtils.m)  
+22. [从AppStore获取版App最新本号](/Template/TemplateUtils.m)
