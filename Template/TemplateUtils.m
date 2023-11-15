@@ -98,6 +98,8 @@ dispatch_source_t fetchGCDTimer(void) {
         NSDictionary *info = arr[0];
         NSNumber *trackId = info[@"trackId"];
         NSString *version = info[@"version"];
+        // 此链接可以跳到AppStore的app下载页
+        NSString *trackViewUrl = info[@"trackViewUrl"];
         NSLog(@"--: %@", trackId);
         NSLog(@"--: %@", version);
     }] resume];
