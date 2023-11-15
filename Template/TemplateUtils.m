@@ -134,3 +134,30 @@ static dispatch_source_t _timer;
 }
 
 @end
+
+#pragma mark - UITextField 添加 leftView
+@interface UITextField (LeftText)
+
+- (void)setLeftText:(NSString *)text;
+
+@end
+
+@implementation UITextField (LeftText)
+
+- (void)setLeftText:(NSString *)text
+{
+    // 使用 UIButton 可以设置留空白, UILabel不能留空白，因为 UITextField 会重新计算并设置 leftView 的 frame
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.userInteractionEnabled = NO;
+    [btn setTitle:[text stringByAppendingString:@": "] forState:UIControlStateNormal];
+    [btn setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+    // 留空白
+    btn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+
+    self.leftView = btn;
+    // 这个必须设置，否则不会显示
+    self.leftViewMode = UITextFieldViewModeAlways;
+}
+
+@end
+

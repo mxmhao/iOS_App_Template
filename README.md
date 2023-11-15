@@ -7,7 +7,8 @@ iOS工具类和模板代码，简单高效
 3. [国际化，本地化：LocalizedManager/](/Utils/LocalizedManager)
 4. [NSInputStream添加跳过（skip）方法：NSInputStream+Skip/](/Utils/NSInputStreamSkip)  
 5. [工具类，计算文件MD5、创建图片缩略图、获取文件夹大小、获取可用存储空间大小、AES加解密：Utils.m](/Utils/Utils.m)  
-6. [随app启动自动运行一些代码，不需要开发者主动调用，适用于一些第三库自动运行](/Utils/_XMAutoLaunch.m)
+6. [随app启动自动运行一些代码，不需要开发者主动调用，适用于一些第三库自动运行](/Utils/_XMAutoLaunch.m)  
+7. [限制 UITextField 输入](/Utils/InputLimiter)
 
 
 ## [模板类在“/Template/”目录下，一般无法直接使用，主要用来参考里面的逻辑，或者直接修改模板代码](/Template)
@@ -35,4 +36,5 @@ iOS工具类和模板代码，简单高效
 21. [使用iOS原生类请求 HTTP JSON，不依赖第三方库](/Template/TemplateUtils.m)  
 22. [从AppStore获取版App最新本号](/Template/TemplateUtils.m)  
 23. [使用UIDocumentPickerViewController获取手机本地（File app）文件](/Template/SelectFileViewController.m)  
-23. [使用 NSURLSession.sharedSession 下载文件并获取进度，免得自己创建 NSURLSession  来设置 NSURLSessionDownloadDelegate 去获取进度](/Template/TemplateUtils.m)
+24. [使用 NSURLSession.sharedSession 下载文件并获取进度，免得自己创建 NSURLSession  来设置 NSURLSessionDownloadDelegate 去获取进度](/Template/TemplateUtils.m)  
+25. [UITextField 添加 leftView 文字 并且为 leftView 留空白](/Template/TemplateUtils.m)
