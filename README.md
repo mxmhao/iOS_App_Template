@@ -34,4 +34,5 @@ iOS工具类和模板代码，简单高效
 20. [复制到剪切板](/Template/TemplateUtils.m)  
 21. [使用iOS原生类请求 HTTP JSON，不依赖第三方库](/Template/TemplateUtils.m)  
 22. [从AppStore获取版App最新本号](/Template/TemplateUtils.m)  
-23. [使用UIDocumentPickerViewController获取手机本地（File app）文件](/Template/SelectFileViewController.m)
+23. [使用UIDocumentPickerViewController获取手机本地（File app）文件](/Template/SelectFileViewController.m)  
+23. [使用 NSURLSession.sharedSession 下载文件并获取进度，免得自己创建 NSURLSession  来设置 NSURLSessionDownloadDelegate 去获取进度](/Template/TemplateUtils.m)

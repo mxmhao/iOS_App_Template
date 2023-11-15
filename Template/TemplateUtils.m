@@ -105,4 +105,32 @@ dispatch_source_t fetchGCDTimer(void) {
     }] resume];
 }
 
+#pragma mark - 使用 NSURLSession.sharedSession 下载文件并获取进度，这样就可以不用自己创建NSURLSession 来设置NSURLSessionDownloadDelegate去获取进度
+static NSURLSessionDownloadTask *_task;
+static dispatch_source_t _timer;
+- (void)downloadFile
+{
+    __weak __typeof(self) weakSelf = self;
+    // 定时器，定时获取下载进度
+    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+    dispatch_source_set_timer(_timer, dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), 0.5 * NSEC_PER_SEC, 0.1 * NSEC_PER_SEC);
+    dispatch_source_set_event_handler(_timer, ^() {
+        __strong __typeof(weakSelf) self = weakSelf;
+        if (nil == _task || _task.countOfBytesExpectedToReceive == 0) return;
+        
+        // 进度
+        [NSString stringWithFormat:@"%lld%%", _task.countOfBytesReceived * 100 / _task.countOfBytesExpectedToReceive];
+    });
+    
+    _task = [NSURLSession.sharedSession downloadTaskWithURL:[NSURL URLWithString:@"file url"] completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        // 停止定时器
+        dispatch_source_cancel(_timer);
+        __strong __typeof(weakSelf) self = weakSelf;
+        // 下载完成或出错
+    }];
+    [_task resume];
+    // 启动定时器
+    dispatch_resume(_timer);
+}
+
 @end
