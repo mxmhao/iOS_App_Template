@@ -38,4 +38,4 @@ iOS工具类和模板代码，简单高效
 23. [使用UIDocumentPickerViewController获取手机本地（File app）文件](/Template/SelectFileViewController.m)  
 24. [使用 NSURLSession.sharedSession 下载文件并获取进度，免得自己创建 NSURLSession  来设置 NSURLSessionDownloadDelegate 去获取进度](/Template/TemplateUtils.m)  
 25. [UITextField 添加 leftView 文字 并且为 leftView 留空白](/Template/TemplateUtils.m)  
-26. [设置 UIButton 图片和文字之间的间隔](/Template/TemplateUtils.m)
+26. [设置 UIButton 图片和文字之间的间隔](/Template/TemplateUtils.m#L25)
