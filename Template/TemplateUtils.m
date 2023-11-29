@@ -161,3 +161,26 @@ static dispatch_source_t _timer;
 
 @end
 
+#pragma mark - UIButton
+@interface UIButton (ImageAndTitleSpace) @end
+@implementation UIButton (ImageAndTitleSpace)
+// 设置 UIButton 图片和文字之间的间隔
+- (void)setImageAndTitleSpace:(CGFloat)space
+{
+    // 必须是 imageEdgeInsets 设置间隔，titleEdgeInsets 会导致 UIButtonTypeCustom 类型的文字出现省略。 left 必须是负数。image可能会超出 self.bounds 的左边界，注意设置了切割超出边界属性
+    self.imageEdgeInsets = UIEdgeInsetsMake(0, -space, 0, 0);// storyboard 和 xib 的属性面板上可以设置
+    
+    // iOS 15 以上的也可以这么设置
+    if (@available(iOS 15.0, *)) {
+        UIButtonConfiguration *conf = UIButtonConfiguration.plainButtonConfiguration;
+        // 这些都可以在 storyboard 和 xib 的属性面板上找到。
+        conf.imagePadding = space;
+        // 这玩意可以改变图片的位置，终于可以不用自定义了
+        conf.imagePlacement = NSDirectionalRectEdgeTrailing;
+        // 通过 UIButtonConfiguration 创建 UIButton
+        [UIButton buttonWithConfiguration:conf primaryAction:nil];
+    }
+    
+}
+@end
+
