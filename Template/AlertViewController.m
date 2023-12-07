@@ -1,9 +1,5 @@
 //
 //  AlertViewController.m
-//  iOS_App_Template
-//
-//  Created by macmini on 2023/12/7.
-//  Copyright © 2023 mxm. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
