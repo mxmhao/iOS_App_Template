@@ -126,7 +126,7 @@
     text = [text stringByReplacingCharactersInRange:range withString:string];
     
     int value = text.intValue;
-    return 0 >= value ? value <= _upperLimit : value >= _lowerLimit;
+    return value >= 0 ? value <= _upperLimit : value >= _lowerLimit;
 }
 
 @end
@@ -231,7 +231,7 @@
         text = [text stringByReplacingCharactersInRange:range withString:string];
     }
     float value = text.floatValue;
-    return 0 >= value ? value <= _upperLimit : value >= _lowerLimit;
+    return value >= 0 ? value <= _upperLimit : value >= _lowerLimit;
 }
 
 //- (void)textFieldDidChangeSelection:(UITextField *)textField
