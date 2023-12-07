@@ -15,6 +15,7 @@
 		9A58A7E62B04B157002864C1 /* SelectFileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A58A7E52B04B157002864C1 /* SelectFileViewController.m */; };
 		9A58A7EA2B04C348002864C1 /* InputLimiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A58A7E82B04C348002864C1 /* InputLimiter.m */; };
 		9A5B818127BE19D400963DB6 /* Development_ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9A5B818027BE19D400963DB6 /* Development_ExportOptions.plist */; };
+		9A6A99392B214C6600DA3FCF /* AlertViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A6A99372B214C6600DA3FCF /* AlertViewController.m */; };
 		9A9CB97726F0292D00F8107D /* ScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A9CB97626F0292D00F8107D /* ScanViewController.m */; };
 		9AB18E23267830C8000A6E5B /* Test2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E22267830C8000A6E5B /* Test2ViewController.swift */; };
 		9AB18E252679B7ED000A6E5B /* EventKitTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */; };
@@ -67,6 +68,7 @@
 		9A5B818027BE19D400963DB6 /* Development_ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Development_ExportOptions.plist; sourceTree = SOURCE_ROOT; };
 		9A66F201269BC54F0042BF52 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		9A66F202269BC54F0042BF52 /* Utils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
+		9A6A99372B214C6600DA3FCF /* AlertViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertViewController.m; sourceTree = "<group>"; };
 		9A9CB97626F0292D00F8107D /* ScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanViewController.m; sourceTree = "<group>"; };
 		9AB18E22267830C8000A6E5B /* Test2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test2ViewController.swift; sourceTree = "<group>"; };
 		9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EventKitTemplate.m; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				9A1953C626E07479002DEF71 /* LaunchViewController.m */,
 				9A9CB97626F0292D00F8107D /* ScanViewController.m */,
 				9A58A7E52B04B157002864C1 /* SelectFileViewController.m */,
+				9A6A99372B214C6600DA3FCF /* AlertViewController.m */,
 				04BA6F21264BA5CF00CCFE49 /* BLE */,
 				9A1E499A2786E184006A32AC /* SpeechUtils.h */,
 				9A1E499B2786E184006A32AC /* SpeechUtils.m */,
@@ -435,6 +438,7 @@
 				CBB1065221F709CD007BA09A /* ViewController.m in Sources */,
 				CBB1065D21F709CF007BA09A /* main.m in Sources */,
 				CBB1068421F710F8007BA09A /* UploadManager.m in Sources */,
+				9A6A99392B214C6600DA3FCF /* AlertViewController.m in Sources */,
 				CBB1068821F710F8007BA09A /* FileTask.mm in Sources */,
 				CB9C66D122DF2A8300889DB6 /* TableViewCellAutoCalculate.m in Sources */,
 				CBB1064F21F709CD007BA09A /* AppDelegate.m in Sources */,
