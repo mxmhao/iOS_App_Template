@@ -184,5 +184,23 @@ static dispatch_source_t _timer;
     }
     
 }
+
+static const int kTimestampRandomIdLength = 16;
+// 用时间戳生成一种随机id
++ (NSString *)timestampRandomId
+{
+    UInt64 start = (UInt64)(CFAbsoluteTimeGetCurrent() * 1000);
+    // 从2020 年 1 月 1 日 00:00:00 开始的时间戳。与Android端一致
+    NSMutableString *userId = [NSMutableString stringWithFormat:@"%llu", start - 599529600000L];
+    [userId appendString:arc4random() % 2 == 0 ? @"i" : @"I"]; // 以‘i’或‘I’ 结尾表示iOS端
+    char cha[] = {'A', '\0'};
+    for (NSUInteger i = 0, len = kTimestampRandomIdLength - userId.length; i < len; i++) {
+        cha[0] = (arc4random() % 2 == 0 ? 'A' : 'a') + arc4random() % 26;
+        [userId insertString:[NSString stringWithCString:cha encoding:NSASCIIStringEncoding] atIndex:arc4random() % (userId.length - 1)];
+    }
+    
+    return userId.copy;
+}
+
 @end
 
