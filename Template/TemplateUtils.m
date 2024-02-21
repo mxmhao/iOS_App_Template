@@ -204,3 +204,27 @@ static const int kTimestampRandomIdLength = 16;
 
 @end
 
+@interface NSObject (SelectedTextRange) @end
+@implementation NSObject (SelectedTextRange)
+- (void)selectedTextRange
+{
+    // 这里举例是把光标移到 ":" 之前
+    UITextField *textField = [UITextField new];
+    textField.text = @"http://192.168.:8080";
+    NSRange range = [textField.text rangeOfString:@":" options:NSBackwardsSearch];
+//    NSLog(@"--- %d", range.location == NSNotFound);
+    if (range.length > 0 && range.location > 5) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            // 设置光标位置
+            // 文字起始位置
+            UITextPosition *beginDocument = textField.beginningOfDocument;
+            // 自定义 位置
+            UITextPosition *start = [textField positionFromPosition:beginDocument offset:range.location];//左－ 右＋
+            //
+//                UITextPosition *end = [textField positionFromPosition:beginDocument offset:range.location];// 开始和结尾不一样时，定义结尾，这样的效果是选中一段文字
+            textField.selectedTextRange = [textField textRangeFromPosition:start toPosition:start];
+        });
+    }
+}
+
+@end
