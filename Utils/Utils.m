@@ -11,6 +11,7 @@
 #import <CommonCrypto/CommonCrypto.h>
 #import <UIKit/UIImage.h>
 #import <sys/mount.h>
+#import <AVFoundation/AVFoundation.h>
 
 @implementation Utils
 
@@ -378,6 +379,49 @@ NSString * byte2HexString(Byte buf[], size_t len) {
         ++index;
     }
     return [[NSString alloc] initWithBytes:chs length:len * 2 encoding:NSUTF8StringEncoding];
+}
+
+/**
+ #import <AVFoundation/AVFoundation.h>
+ 获取视频的第一帧
+ @param url  视频文件的链接，可以是远程的，也可以是本地的
+ @param filePath 缩略图的存放地址
+ */
++ (void)createVideoThumbnail:(NSString *)url saveToPath:(NSString *)filePath
+{
+    if ([NSFileManager.defaultManager fileExistsAtPath:filePath]) {
+        [NSFileManager.defaultManager removeItemAtPath:filePath error:NULL];
+    }
+    
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:[NSURL URLWithString:url] options:nil];
+    AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    gen.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
+    gen.appliesPreferredTrackTransform = YES;
+    // 如果我们要精确时间，那么只需要
+//    assetGen.requestedTimeToleranceBefore = kCMTimeZero;
+//    assetGen.requestedTimeToleranceAfter = kCMTimeZero;
+    CMTime time = CMTimeMakeWithSeconds(0, 600);
+    if (@available(iOS 16.0, *)) {
+        [gen generateCGImageAsynchronouslyForTime:time completionHandler:^(CGImageRef _Nullable image, CMTime actualTime, NSError * _Nullable error) {
+            if (NULL == image) {
+                return;
+            }
+            UIImage *videoImage = [[UIImage alloc] initWithCGImage:image];
+            NSData *data = UIImageJPEGRepresentation(videoImage, 0.9);
+            [data writeToFile:filePath atomically:YES];
+        }];
+    } else {
+        NSError *error = nil;
+//        CMTime actualTime;
+        CGImageRef image = [gen copyCGImageAtTime:time actualTime:NULL error:&error];
+        if (NULL == image) {
+            return;
+        }
+        UIImage *videoImage = [[UIImage alloc] initWithCGImage:image];
+        CGImageRelease(image);
+        NSData *data = UIImageJPEGRepresentation(videoImage, 0.9);
+        [data writeToFile:filePath atomically:YES];
+    }
 }
 
 @end
