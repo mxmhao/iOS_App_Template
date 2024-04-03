@@ -12,6 +12,7 @@
 #import <UIKit/UIImage.h>
 #import <sys/mount.h>
 #import <AVFoundation/AVFoundation.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 @implementation Utils
 
@@ -422,6 +423,71 @@ NSString * byte2HexString(Byte buf[], size_t len) {
         NSData *data = UIImageJPEGRepresentation(videoImage, 0.9);
         [data writeToFile:filePath atomically:YES];
     }
+}
+
++ (void)disableRemoteCommand
+{
+    MPRemoteCommandCenter *rcc = [MPRemoteCommandCenter sharedCommandCenter];
+    
+    rcc.pauseCommand.enabled = NO;
+    rcc.playCommand.enabled = NO;
+    rcc.stopCommand.enabled = NO;
+    rcc.togglePlayPauseCommand.enabled = NO;
+    rcc.enableLanguageOptionCommand.enabled = NO;
+    rcc.disableLanguageOptionCommand.enabled = NO;
+    rcc.changePlaybackRateCommand.enabled = NO;
+    rcc.changeRepeatModeCommand.enabled = NO;
+    rcc.changeShuffleModeCommand.enabled = NO;
+    
+    rcc.nextTrackCommand.enabled = NO;
+    rcc.previousTrackCommand.enabled = NO;
+    
+    rcc.skipForwardCommand.enabled = NO;
+    rcc.skipBackwardCommand.enabled = NO;
+    
+    rcc.seekForwardCommand.enabled = NO;
+    rcc.seekBackwardCommand.enabled = NO;
+    rcc.changePlaybackPositionCommand.enabled = NO;
+    
+    rcc.ratingCommand.enabled = NO;
+    
+    rcc.likeCommand.enabled = NO;
+    rcc.dislikeCommand.enabled = NO;
+    rcc.bookmarkCommand.enabled = NO;
+    
+    [rcc.pauseCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.playCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.stopCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.togglePlayPauseCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.enableLanguageOptionCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.disableLanguageOptionCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.changePlaybackRateCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.changeRepeatModeCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.changeShuffleModeCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    
+    [rcc.nextTrackCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.previousTrackCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    
+    [rcc.skipForwardCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.skipBackwardCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    
+    [rcc.seekForwardCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.seekBackwardCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.changePlaybackPositionCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    
+    [rcc.ratingCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    
+    [rcc.likeCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.dislikeCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    [rcc.bookmarkCommand addTarget:self action:@selector(remoteCommandDoNothing:)];
+    
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+}
+
++ (MPRemoteCommandHandlerStatus)remoteCommandDoNothing:(MPRemoteCommandEvent *)event
+{
+//    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+    return MPRemoteCommandHandlerStatusCommandFailed;
 }
 
 @end

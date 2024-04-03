@@ -10,7 +10,8 @@ iOS工具类和模板代码，简单高效
 5. [工具类，计算文件MD5、创建图片缩略图、获取文件夹大小、获取可用存储空间大小、AES加解密：Utils.m](/Utils/Utils.m)  
 6. [随app启动自动运行一些代码，不需要开发者主动调用，适用于一些第三库自动运行](/Utils/_XMAutoLaunch.m)  
 7. [限制 UITextField 输入](/Utils/InputLimiter)  
-8. [获取视频文件的第一帧，远程或本地视频都可](/Utils/Utils.m#L390)
+8. [获取视频文件的第一帧，远程或本地视频都可](/Utils/Utils.m#L390)  
+9. [禁止音乐远程控制](/Utils/Utils.m#L428)  
 
 
 ## [模板类在“/Template/”目录下，一般无法直接使用，主要用来参考里面的逻辑，或者直接修改模板代码](/Template)
