@@ -163,7 +163,7 @@ static size_t trimedBytesLength(Byte *const bytes, size_t const dataLen)
 static const Byte iv[] = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6};
 
 + (NSData *)encryptUseAES128CBC:(NSData *)data key:(Byte *)key
-{
+{// 单片机： https://blog.csdn.net/chengjunchengjun/article/details/109322987
     if (!data) return nil;
     
     NSUInteger len = data.length;
