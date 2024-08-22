@@ -59,13 +59,18 @@
         if (nil == self) return;
         
         // 把 newURL 传递给你要用到的地方，注意，不能使用 newURL.absoluteString 获取文件，必须用newURL获取文件，否则获取不到文件
+        // 为防止 newURL 无法访问，最好先拷贝一份文件到自己的沙盒下
+        NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:newURL.lastPathComponent];
+        [NSFileManager.defaultManager removeItemAtPath:path error:NULL];
+        NSURL *url = [NSURL fileURLWithPath:path];
+        [NSFileManager.defaultManager copyItemAtURL:newURL toURL:url error:NULL];
         
         // 获取文件信息
-        NSDictionary *fileAttr = [NSFileManager.defaultManager attributesOfItemAtPath:newURL.path error:nil];
+        NSDictionary *fileAttr = [NSFileManager.defaultManager attributesOfItemAtPath:url.path error:nil];
         // 文件大小
         NSUInteger fileSize = [fileAttr fileSize];
         // 文件流
-        [NSInputStream inputStreamWithURL:newURL];
+        [NSInputStream inputStreamWithURL:url];
     }];
     [url stopAccessingSecurityScopedResource];
 }
