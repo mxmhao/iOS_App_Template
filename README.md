@@ -50,4 +50,4 @@ iOS工具类和模板代码，简单高效
 ## 长见识（自己去搜，去了解，去使用）
 1. 音频控制、锁屏显示： MPRemoteCommandCenter、MPNowPlayingInfoCenter  
 2. 音视频播放：AVFoundation； 音视频下载缓存：AVAssetDownloadURLSession  
-3. HTTP上传文件的断点续传协议可参考：https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/  
+3. HTTP上传文件的断点续传协议可参考（苹果公司为其NSURLSession上传文件定制的）：https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/  

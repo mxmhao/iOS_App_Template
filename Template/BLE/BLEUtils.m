@@ -4,6 +4,14 @@
 //
 //  Created by min on 2021/4/28.
 //
+/*
+假如有两个 CBCentralManager 对象 cm1 和 cm2，cm1 扫描到的 CBPeripheral 对象 a 直接给 cm2 去连接，可能报错或者崩溃.
+解决方案是:
+    把 cm1 扫描到的 a.identifier 在 cm2 上调用:
+    NSArray<CBPeripheral *> *arr = [cm2 retrievePeripheralsWithIdentifiers:@[a.identifier]]
+    arr 中存放的是找回的 a，cm2可以直接连接：[cm2 connectPeripheral:arr.firstObject options:nil]
+    注意太久了arr有可能为空
+ */
 
 #import "BLEUtils.h"
 #import <CoreBluetooth/CoreBluetooth.h>
