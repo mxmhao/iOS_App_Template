@@ -19,6 +19,7 @@
 		9A9CB97726F0292D00F8107D /* ScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A9CB97626F0292D00F8107D /* ScanViewController.m */; };
 		9AB18E23267830C8000A6E5B /* Test2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E22267830C8000A6E5B /* Test2ViewController.swift */; };
 		9AB18E252679B7ED000A6E5B /* EventKitTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */; };
+		9AB761DA2D1251A7005A1679 /* BugError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB761D82D1251A7005A1679 /* BugError.swift */; };
 		9ACE9C342C52470A0095E08B /* ServiceRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ACE9C332C52470A0095E08B /* ServiceRegister.m */; };
 		9AD2C8272A89B1D3003238D2 /* TemplateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AD2C8262A89B1D3003238D2 /* TemplateUtils.m */; };
 		9AFF81042931A697007B7DB5 /* MDNSManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFF81022931A697007B7DB5 /* MDNSManager.m */; };
@@ -73,6 +74,8 @@
 		9A9CB97626F0292D00F8107D /* ScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanViewController.m; sourceTree = "<group>"; };
 		9AB18E22267830C8000A6E5B /* Test2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test2ViewController.swift; sourceTree = "<group>"; };
 		9AB18E242679B7ED000A6E5B /* EventKitTemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EventKitTemplate.m; sourceTree = "<group>"; };
+		9AB761D82D1251A7005A1679 /* BugError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugError.swift; sourceTree = "<group>"; };
+		9AB761DB2D1254AC005A1679 /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = usr/lib/swift/libswift_Concurrency.tbd; sourceTree = SDKROOT; };
 		9ACE9C332C52470A0095E08B /* ServiceRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServiceRegister.m; sourceTree = "<group>"; };
 		9AD2C8262A89B1D3003238D2 /* TemplateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TemplateUtils.m; sourceTree = "<group>"; };
 		9AFF81022931A697007B7DB5 /* MDNSManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDNSManager.m; sourceTree = "<group>"; };
@@ -163,6 +166,7 @@
 		9A2875282693EADA002B046A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9AB761DB2D1254AC005A1679 /* libswift_Concurrency.tbd */,
 				9A2875292693EADA002B046A /* NetworkExtension.framework */,
 			);
 			name = Frameworks;
@@ -175,6 +179,14 @@
 				9A58A7E82B04C348002864C1 /* InputLimiter.m */,
 			);
 			path = InputLimiter;
+			sourceTree = "<group>";
+		};
+		9AB761D92D1251A7005A1679 /* BugError */ = {
+			isa = PBXGroup;
+			children = (
+				9AB761D82D1251A7005A1679 /* BugError.swift */,
+			);
+			path = BugError;
 			sourceTree = "<group>";
 		};
 		9AFF81012931A697007B7DB5 /* MDNS */ = {
@@ -202,6 +214,7 @@
 				CBB1064C21F709CD007BA09A /* iOS_App_Template */,
 				CBB1066321F70A55007BA09A /* Template */,
 				CBB1066421F70A55007BA09A /* Utils */,
+				9AB761D92D1251A7005A1679 /* BugError */,
 				CBB1064B21F709CD007BA09A /* Products */,
 				9A2875282693EADA002B046A /* Frameworks */,
 			);
@@ -457,6 +470,7 @@
 				CBB1068B21F710F8007BA09A /* DeviceNetworkManager.m in Sources */,
 				CBB1068721F710F8007BA09A /* DownloadManager.m in Sources */,
 				CBB1069D21F8361A007BA09A /* LocalizedManager.m in Sources */,
+				9AB761DA2D1251A7005A1679 /* BugError.swift in Sources */,
 				CB9C66D822E1B30700889DB6 /* LocalAuthentication.m in Sources */,
 				39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */,
 				04BA6F24264BA5E200CCFE49 /* BLEUtils.m in Sources */,
@@ -610,6 +624,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mxm.iOS-App-Template";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -629,6 +647,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mxm.iOS-App-Template";
 				PRODUCT_NAME = "$(TARGET_NAME)";
