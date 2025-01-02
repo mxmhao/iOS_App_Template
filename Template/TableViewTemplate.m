@@ -16,7 +16,7 @@
 {
     
     UITableView *_tableView;
-    NSArray *_arr;
+    NSMutableArray *_arr;
     UIBarButtonItem *_selectAllItem;
 }
 
@@ -42,7 +42,7 @@
     _tableView.allowsMultipleSelectionDuringEditing = YES;//用系统的多选形式
     [self.view addSubview:_tableView];
     
-    _arr = @[@"老大", @"12312"];
+    _arr = [NSMutableArray arrayWithObjects:@"老大", @"12312", nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -153,7 +153,40 @@
 {
     return YES;
 }
+// iOS 11 起：
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UIContextualAction *deleteAction = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleDestructive title:@"删除" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+        [self->_arr removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }];
+    deleteAction.backgroundColor = UIColor.blueColor;
+    
+    UIContextualAction *renameAction = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"重命名" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+        //
+    }];
+    renameAction.backgroundColor = UIColor.redColor;
+    
+    return [UISwipeActionsConfiguration configurationWithActions:@[deleteAction, renameAction]];
+}
 
+// iOS 8 起：
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        [self->_arr removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }];
+    UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"重命名" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        //
+    }];
+    
+    // You can add more actions as needed
+    // Return the array of row actions
+    return @[deleteAction, renameAction];
+}
+
+// iOS 8 之前：
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return UITableViewCellEditingStyleDelete;
@@ -161,7 +194,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [arr removeObjectAtIndex:indexPath.row];//删除数据
+    [_arr removeObjectAtIndex:indexPath.row];//删除数据
     [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationBottom];//删除行cell
 }
 
