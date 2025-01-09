@@ -45,6 +45,7 @@ iOS工具类和模板代码，简单高效
 27. [用最简单的方式仿 UIAlertController 弹框](/Template/AlertViewController.m#L23)  
 28. [移动 UITextField 的光标位置](/Template/TemplateUtils.m#L211)  
 29. [组件化服务自动注册，与分阶段启动](/Template/ServiceRegister.m)  
+30. [给 storyboard 或者 xib 添加国际化key填空，而不是将 storyboard 或者 xib 直接国际化，方便国际化 Localizable.strings 文件的统一管理](/Template/SwiftTemplate.swift#L11)  
 
 
 ## 长见识（自己去搜，去了解，去使用）

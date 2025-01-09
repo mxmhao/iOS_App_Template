@@ -22,6 +22,7 @@
 		9AB761DA2D1251A7005A1679 /* BugError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB761D82D1251A7005A1679 /* BugError.swift */; };
 		9ACE9C342C52470A0095E08B /* ServiceRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ACE9C332C52470A0095E08B /* ServiceRegister.m */; };
 		9AD2C8272A89B1D3003238D2 /* TemplateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AD2C8262A89B1D3003238D2 /* TemplateUtils.m */; };
+		9AF04BB62D2F54A600189FC4 /* SwiftTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF04BB52D2F54A600189FC4 /* SwiftTemplate.swift */; };
 		9AFF81042931A697007B7DB5 /* MDNSManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFF81022931A697007B7DB5 /* MDNSManager.m */; };
 		9AFF81092931B975007B7DB5 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFF81062931B975007B7DB5 /* WebViewController.m */; };
 		9AFF810A2931B975007B7DB5 /* URLSchemeHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFF81072931B975007B7DB5 /* URLSchemeHandler.m */; };
@@ -78,6 +79,7 @@
 		9AB761DB2D1254AC005A1679 /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = usr/lib/swift/libswift_Concurrency.tbd; sourceTree = SDKROOT; };
 		9ACE9C332C52470A0095E08B /* ServiceRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServiceRegister.m; sourceTree = "<group>"; };
 		9AD2C8262A89B1D3003238D2 /* TemplateUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TemplateUtils.m; sourceTree = "<group>"; };
+		9AF04BB52D2F54A600189FC4 /* SwiftTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTemplate.swift; sourceTree = "<group>"; };
 		9AFF81022931A697007B7DB5 /* MDNSManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDNSManager.m; sourceTree = "<group>"; };
 		9AFF81032931A697007B7DB5 /* MDNSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDNSManager.h; sourceTree = "<group>"; };
 		9AFF81062931B975007B7DB5 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 				9A1E499B2786E184006A32AC /* SpeechUtils.m */,
 				9AD2C8262A89B1D3003238D2 /* TemplateUtils.m */,
 				9ACE9C332C52470A0095E08B /* ServiceRegister.m */,
+				9AF04BB52D2F54A600189FC4 /* SwiftTemplate.swift */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 				CBB1068D21F710F8007BA09A /* UIViewController+ShouldNotAutorotate.m in Sources */,
 				9ACE9C342C52470A0095E08B /* ServiceRegister.m in Sources */,
 				9A58A7E62B04B157002864C1 /* SelectFileViewController.m in Sources */,
+				9AF04BB62D2F54A600189FC4 /* SwiftTemplate.swift in Sources */,
 				9A58A7EA2B04C348002864C1 /* InputLimiter.m in Sources */,
 				CBB1069121F71417007BA09A /* IPAddr.m in Sources */,
 				9AD2C8272A89B1D3003238D2 /* TemplateUtils.m in Sources */,
