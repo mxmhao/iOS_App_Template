@@ -12,6 +12,7 @@ iOS工具类和模板代码，简单高效
 7. [限制 UITextField 输入](/Utils/InputLimiter)  
 8. [获取视频文件的第一帧，远程或本地视频都可](/Utils/Utils.m#L390)  
 9. [禁止音乐远程控制](/Utils/Utils.m#L428)  
+10. [用最简单的方式自定义一个Toast](/Utils/Toast.m)  
 
 
 ## [模板类在“/Template/”目录下，一般无法直接使用，主要用来参考里面的逻辑，或者直接修改模板代码](/Template)

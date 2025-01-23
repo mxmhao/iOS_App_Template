@@ -12,6 +12,7 @@
 		9A1953C726E07479002DEF71 /* LaunchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1953C626E07479002DEF71 /* LaunchViewController.m */; };
 		9A1E499C2786E184006A32AC /* SpeechUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1E499B2786E184006A32AC /* SpeechUtils.m */; };
 		9A28752A2693EADA002B046A /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2875292693EADA002B046A /* NetworkExtension.framework */; };
+		9A3D688E2D421E66006BEA3D /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D688D2D421E66006BEA3D /* Toast.m */; };
 		9A58A7E62B04B157002864C1 /* SelectFileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A58A7E52B04B157002864C1 /* SelectFileViewController.m */; };
 		9A58A7EA2B04C348002864C1 /* InputLimiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A58A7E82B04C348002864C1 /* InputLimiter.m */; };
 		9A5B818127BE19D400963DB6 /* Development_ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9A5B818027BE19D400963DB6 /* Development_ExportOptions.plist */; };
@@ -64,6 +65,8 @@
 		9A1E499B2786E184006A32AC /* SpeechUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeechUtils.m; sourceTree = "<group>"; };
 		9A2875272693EAD4002B046A /* iOS_App_Template.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOS_App_Template.entitlements; sourceTree = "<group>"; };
 		9A2875292693EADA002B046A /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		9A3D688C2D421E66006BEA3D /* Toast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Toast.h; sourceTree = "<group>"; };
+		9A3D688D2D421E66006BEA3D /* Toast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Toast.m; sourceTree = "<group>"; };
 		9A47A1712953330A00D2E5AA /* _XMAutoLaunch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _XMAutoLaunch.m; sourceTree = "<group>"; };
 		9A58A7E52B04B157002864C1 /* SelectFileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectFileViewController.m; sourceTree = "<group>"; };
 		9A58A7E82B04C348002864C1 /* InputLimiter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputLimiter.m; sourceTree = "<group>"; };
@@ -291,6 +294,8 @@
 				CBB1069A21F83619007BA09A /* LocalizedManager */,
 				9A66F201269BC54F0042BF52 /* Utils.h */,
 				9A66F202269BC54F0042BF52 /* Utils.m */,
+				9A3D688C2D421E66006BEA3D /* Toast.h */,
+				9A3D688D2D421E66006BEA3D /* Toast.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -474,6 +479,7 @@
 				CBB1068B21F710F8007BA09A /* DeviceNetworkManager.m in Sources */,
 				CBB1068721F710F8007BA09A /* DownloadManager.m in Sources */,
 				CBB1069D21F8361A007BA09A /* LocalizedManager.m in Sources */,
+				9A3D688E2D421E66006BEA3D /* Toast.m in Sources */,
 				9AB761DA2D1251A7005A1679 /* BugError.swift in Sources */,
 				CB9C66D822E1B30700889DB6 /* LocalAuthentication.m in Sources */,
 				39B62186235C7C8F00F372D4 /* NSInputStream+Skip.m in Sources */,
