@@ -35,3 +35,28 @@ extension UILabel {
         }
     }
 }
+
+extension UIViewController {
+    func adjustNavigationBarAppearance() {
+        let barBgColor = UIColor(named: "view_bg")!
+        let titleColor = UIColor(named: "title1_color")!
+        let titleTextAttributes = [NSAttributedString.Key.foregroundColor : titleColor]
+        if #available(iOS 13.0, *) {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = barBgColor
+            // 设置title颜色
+            appearance.titleTextAttributes = titleTextAttributes;
+//            let itemAppearance = UIBarButtonItemAppearance(style: .plain)
+//            itemAppearance.normal.titleTextAttributes = titleTextAttributes
+//            appearance.backButtonAppearance = itemAppearance
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        } else {
+            navigationController?.navigationBar.titleTextAttributes = titleTextAttributes
+            navigationController?.navigationBar.barTintColor = barBgColor
+        }
+        // 设置item的颜色，包括字体颜色和图片颜色: topItem, backItem, rightBarButtonItem
+        navigationController?.navigationBar.tintColor = titleColor
+    }
+}
