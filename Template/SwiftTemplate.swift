@@ -60,3 +60,21 @@ extension UIViewController {
         navigationController?.navigationBar.tintColor = titleColor
     }
 }
+
+extension UIImage {
+    // 生成圆角矩形图片，可拉伸
+    static func resizableRoundedRectImage(size: CGSize, color: UIColor, cornerRadius: CGFloat) -> UIImage? {
+        let image = UIGraphicsImageRenderer(size: size).image { context in
+            // 设置抗锯齿
+            context.cgContext.setAllowsAntialiasing(true)
+            context.cgContext.setShouldAntialias(true)
+            // 高质量插值计算
+            context.cgContext.interpolationQuality = .high
+            let path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: size.width, height: size.height), cornerRadius: cornerRadius)
+            path.addClip()
+            color.setFill()
+            path.fill() // 区域内填充
+        }
+        return image.resizableImage(withCapInsets: UIEdgeInsets(top: 0, left: cornerRadius, bottom: 0, right: cornerRadius), resizingMode: .stretch)
+    }
+}
