@@ -49,6 +49,7 @@ iOS工具类和模板代码，简单高效
 30. [给 storyboard 或者 xib 添加国际化key填空，而不是将 storyboard 或者 xib 直接国际化，方便国际化 Localizable.strings 文件的统一管理](/Template/SwiftTemplate.swift#L11)  
 31. [设置 navigationBar 颜色](/Template/SwiftTemplate.swift#L40)  
 32. [代码生成圆角矩形图片，可拉伸](/Template/SwiftTemplate.swift#L66)  
+33. [圆环倒计时动画](/Template/SwiftTemplate.swift#L83)  
 
 
 ## 长见识（自己去搜，去了解，去使用）

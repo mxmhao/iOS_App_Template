@@ -78,3 +78,44 @@ extension UIImage {
         return image.resizableImage(withCapInsets: UIEdgeInsets(top: 0, left: cornerRadius, bottom: 0, right: cornerRadius), resizingMode: .stretch)
     }
 }
+
+// 倒计时环动画
+class DownCountUtils {
+    private static let key = "downCount"
+    
+    // 生成一个圆环
+    static func downCountCircular(frame: CGRect, radius: CGFloat, color: UIColor) -> CAShapeLayer {
+        let bezierPath = UIBezierPath(arcCenter: CGPoint(x: radius, y: radius),
+                                      radius: radius,
+                                      startAngle: .pi * 1.5,
+                                      endAngle: .pi * -0.5,
+                                      clockwise: false)
+        
+        let layer = CAShapeLayer()
+        layer.frame = frame
+        layer.fillColor = UIColor.clear.cgColor
+        layer.strokeColor = color.cgColor
+        layer.lineWidth = 10
+        layer.lineCap = .round
+        layer.path = bezierPath.cgPath
+        layer.strokeEnd = 0.0
+        return layer
+    }
+    
+    // 给上面生成的圆环，添加倒计时消失动画
+    /// - parameters:
+    /// - totalTime: 总时间，单位：秒.
+    /// - remainingTime: 剩余时间，单位：秒.
+    static func startDownCountAnimation(_ layer: CALayer, totalTime: UInt, remainingTime: UInt) {
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
+        animation.fromValue = CGFloat(remainingTime) / CGFloat(totalTime)
+        animation.toValue = CGFloat(0)
+        animation.duration = CFTimeInterval(remainingTime)
+        animation.isRemovedOnCompletion = false
+        layer.add(animation, forKey: key)
+    }
+    // 删除动画
+    static func stopDownCountAnimation(_ layer: CALayer) {
+        layer.removeAnimation(forKey: key)
+    }
+}
